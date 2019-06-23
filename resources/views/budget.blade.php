@@ -11,12 +11,12 @@
 
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <meta name="user" content="Auth::user()">
+  <meta name="user" content="{{ Auth::user() }}">
 
   <title>Budget</title>
 
   <!-- Scripts -->
-  <script src="{{ asset('js/budget-app.js') }}" defer></script>
+  <script src="{{ mix('js/app.js') }}" defer></script>
 
   <!-- Fonts -->
   <link rel="dns-prefetch" href="https://fonts.gstatic.com">
@@ -25,43 +25,12 @@
   <link href="https://fonts.googleapis.com/css?family=Nunito+Sans" rel="stylesheet" type="text/css">
 
   <!-- Styles -->
-  <link href="{{ asset('css/budget-app.css') }}" rel="stylesheet">
+  <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 </head>
 
 
 <body>
-
-  <div id="main" class="mdc-layout-grid">
-    <div class="mdc-layout-grid__inner">
-      
-      @if(!Auth::user())
-        <div class="mdc-layout-grid__cell--span-4-desktop mdc-layout-grid__cell--span-2-tablet mdc-layout-grid__cell--span-2-phone">
-          You must be signed in to use the Budget app. <br>
-          <a href="/login">Log in</a>
-        </div>
-      @else
-        <div class="mdc-layout-grid__cell--span-12 add-check-row">
-          <button class="mdc-icon-button material-icons" @@click="addCheck"
-              title="add new paycheck">add</button>
-          <flat-pickr :config="cal.config" v-model="cal.value" @@on-change="saveNewCheck"
-              ref="flatPickr"></flat-pickr>
-          <div class="mdc-text-field mdc-text-field--with-leading-icon" ref="checkAmount">
-            <i class="mdc-text-field__icon" tabindex="0">$</i>
-            <input type="text" id="check-amount" class="mdc-text-field__input" v-model="checkAmount">
-            <label class="mdc-floating-label" for="check-amount">Deposit Amount</label>
-            <div class="mdc-line-ripple"></div>
-          </div>
-        </div>
-        <list-check v-for="check of checks" :check="check" :key="'check-'+check.id"
-            @@check-remove="deletedCheck" @@bill-remove="deletedBill"
-            @@bill-update="updatedBill"></list-check>
-        <!--<div class="mdc-layout-grid__cell--span-12 add-bill-line"><em>add bill:</em></div>-->
-        <add-bill @bill-add="addedBill"></add-bill>
-      @endif
-      
-    </div>
-  </div>
-
+  <div id="app" class="mdc-layout-grid"></div>
 </body>
 
 
