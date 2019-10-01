@@ -1,0 +1,21 @@
+{
+  "short_name": "Budget",
+  "name": "Somero Budget",
+  "start_url": "?app",
+  "background_color": "#fefefe",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#ee6300",
+  "icons": [
+    {
+      "src": "/storage/images/budget-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/storage/images/budget-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

@@ -38,4 +38,5 @@ mix
   
   .webpackConfig(webpackConfig)
   .scssForVue()
+  .browserSync({ proxy: 'localhost:8000' })
 

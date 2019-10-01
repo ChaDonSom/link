@@ -12,7 +12,7 @@ window.user = document.head.querySelector('meta[name="user"]');
 if (window.user) window.user = JSON.parse(window.user.content)
 let api_token = window.user ? window.user.api_token : false
 
-if (api_token) window.Axios.defaults.headers.common['Authorization'] = 'Bearer ' + api_token
+if (api_token) window.axios.defaults.headers.common['Authorization'] = 'Bearer ' + api_token
 else console.warn("API Token not found: user: ", window.user)
 
 window.Vue = require('vue')

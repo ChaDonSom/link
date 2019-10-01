@@ -41,6 +41,10 @@ export default {
     checks() {},
     cal() {},
     addedBill() {},
+  },
+  mounted() {
+    // just to save us from bad users who have no api token
+    if (!this.user && location.href.includes('/login')) this.user = true
   }
 }
 </script>
