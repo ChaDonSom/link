@@ -30,7 +30,7 @@
 
 
 <body>
-  <div id="app" class="mdc-layout-grid"></div>
+  <div id="app"></div>
 </body>
 
 

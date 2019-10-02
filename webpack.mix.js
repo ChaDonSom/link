@@ -8,6 +8,7 @@ var webpackConfig = {
       'sass': path.resolve(__dirname, 'resources/sass'),
       '@traits': path.resolve(__dirname, 'resources/js/traits'),
       '@blocks': path.resolve(__dirname, 'resources/js/components/blocks'),
+      '@mdc': path.resolve(__dirname, 'resources/js/mdc'),
     }
   },
 }
