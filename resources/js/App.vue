@@ -33,6 +33,9 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import VueCompositionApi, { reactive, ref, toRefs, onMounted } from '@vue/composition-api'
+Vue.use(VueCompositionApi)
 import FlatPickr from 'flatpickr'
 import AddBill from '@js/AddBill.vue'
 import Grid from '@mdc/grid.vue'
@@ -42,21 +45,21 @@ import { appUrl, user, session } from '@traits/AccessesHeadMeta'
 export default {
   name: "App",
   components: { FlatPickr, AddBill, Grid, GridInner, Cell },
-  data() { return {
-    user: window.user,
-  }},
-  methods: {
-    addCheck() {},
-    saveNewCheck() {},
-    checkAmount() {},
-    checks() {},
-    cal() {},
-    addedBill() {},
+  setup(props, context) {
+    const state = reactive({
+      user: window.user,
+      dummies: { addCheck: ()=>{}, saveNewCheck: ()=>{}, checkAmount: ()=>{}, checks: ()=>{}, cal: ()=>{}, addedBill: ()=>{}, },
+    })
+    
+    onMounted(() => {
+      // just to save us from bad users who have no api token
+      if (!state.user && location.href.includes('/login')) state.user = true
+    })
+    return {
+      ...toRefs(state),
+      ...state.dummies,
+    }
   },
-  mounted() {
-    // just to save us from bad users who have no api token
-    if (!this.user && location.href.includes('/login')) this.user = true
-  }
 }
 </script>
 
