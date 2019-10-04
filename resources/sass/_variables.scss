@@ -2,9 +2,17 @@
 $body-bg: #f8fafc;
 
 // Typography
-$font-family-sans-serif: 'Nunito', sans-serif;
+$font-family-sans-serif: 'Nunito Sans', sans-serif;
 $font-size-base: 0.9rem;
 $line-height-base: 1.6;
+$mdc-typography-font-family: $font-family-sans-serif;
+
+$mdc-theme-primary: #6200ee;
+$mdc-theme-secondary: #ee6300;
+$mdc-theme-on-primary: #ffffff;
+$mdc-theme-on-secondary: #ffffff;
+$mdc-theme-surface: #f9f9f9;
+$mdc-theme-on-surface: #000000;
 
 // Colors
 $blue: #3490dc;

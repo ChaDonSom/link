@@ -36,6 +36,11 @@
 import Vue from 'vue'
 import VueCompositionApi, { reactive, ref, toRefs, onMounted } from '@vue/composition-api'
 Vue.use(VueCompositionApi)
+
+import VueRouter from 'vue-router'
+
+import Vuex from 'vuex'
+
 import FlatPickr from 'flatpickr'
 import AddBill from '@js/AddBill.vue'
 import Grid from '@mdc/grid.vue'

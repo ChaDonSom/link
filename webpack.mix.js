@@ -9,6 +9,8 @@ var webpackConfig = {
       '@traits': path.resolve(__dirname, 'resources/js/traits'),
       '@blocks': path.resolve(__dirname, 'resources/js/components/blocks'),
       '@mdc': path.resolve(__dirname, 'resources/js/mdc'),
+      '@pages': path.resolve(__dirname, 'resources/js/pages'),
+      '@store': path.resolve(__dirname, 'resources/js/store'),
     }
   },
 }

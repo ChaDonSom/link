@@ -1,23 +1,39 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="{{ asset('storage/manifest.json') }}">
+  <link rel="icon" sizes="192x192" href="{{ asset('storage/images/budget-192.png') }}">
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Dashboard</div>
+  <!-- CSRF Token -->
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="user" content="{{ Auth::user() }}">
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+  <title>{{ config('app.name', 'Budget') }}</title>
 
-                    You are logged in!
-                </div>
-            </div>
-        </div>
+  <!-- Scripts -->
+  <script src="{{ mix('js/app.js') }}" defer></script>
+
+  <!-- Fonts -->
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css?family=Raleway:100" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito+Sans" rel="stylesheet" type="text/css">
+
+  <!-- Styles -->
+  <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+</head>
+
+
+<body>
+    <div id="app" v-cloak>
+        <router-view></router-view>
     </div>
-</div>
-@endsection
+</body>
+
+
+</html>
