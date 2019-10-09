@@ -1,12 +1,5 @@
-import Vue from 'vue'
-import VueCompositionApi, { reactive, ref, toRefs, onMounted } from '@vue/composition-api'
-Vue.use(VueCompositionApi)
-
-import VueRouter from 'vue-router'
-Vue.use(VueRouter)
-
-import Vuex from 'vuex'
-Vue.use(Vuex)
+import { Vue, VCA, VueRouter, Vuex } from '@js/bootstrap'
+import { reactive, ref, toRefs, onMounted } from '@vue/composition-api'
 
 import Home    from '@pages/Home.vue'
 import Login   from '@pages/Login.vue'

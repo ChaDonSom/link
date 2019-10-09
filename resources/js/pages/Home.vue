@@ -7,7 +7,8 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import Vue from '@js/bootstrap'
+import { reactive, toRefs, onMounted } from '@vue/composition-api'
 import FlatPickr from 'flatpickr'
 import Grid from '@mdc/grid.vue'
 import GridInner from '@mdc/grid-inner.vue'
