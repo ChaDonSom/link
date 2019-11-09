@@ -30,7 +30,6 @@ export default {
     const textfield = ref(null)
     const uid = ref(Math.round(Math.random() * 1000000))
     onMounted(() => {
-      console.log(props)
       if (props.tag !== 'router-link') textfield.value = new MDCTextField(main.value)
     })
     return {

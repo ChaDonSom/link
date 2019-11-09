@@ -8,11 +8,13 @@
       <cell :span="12" class="flex-center">
         <textfield type="password" v-model="password">Password</textfield>
       </cell>
-      <cell :span="2">
-        Remember me
-      </cell>
-      <cell :span="2">
-        Forgot password?
+      <cell :span="12" class="flex-center">
+        <div>
+          Remember me
+        </div>
+        <div>
+          Forgot password?
+        </div>
       </cell>
       <cell :span="12" class="flex-center">
         <mdc-button raised color="secondary" big
@@ -23,8 +25,8 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import { reactive, onMounted, toRefs, computed } from '@vue/composition-api'
+import Vue from '@js/bootstrap'
+import { reactive, onMounted, toRefs, computed, ref } from '@vue/composition-api'
 import { mapGetters, mapActions } from 'vuex'
 import LoginModule from '@store/Login'
 import FlatPickr from 'flatpickr'
@@ -37,11 +39,12 @@ export default {
   name: "Login",
   components: { FlatPickr, Grid, GridInner, Cell, Textfield, MdcButton },
   setup(props, context) {
-    const $store = context.root.$store
+    const $store  = context.root.$store
+    const $router = context.root.$router
     if ($store.state.login) $store.unregisterModule('login')
     $store.registerModule('login', LoginModule)
-    const state = reactive({
-      user: window.user,
+    const user  = ref(window.user)
+    const creds = reactive({
       email: computed({
         get() { return $store.getters['login/email'] },
         set(v) { return $store.dispatch('login/set', ['state', 'email', v]) }
@@ -51,13 +54,15 @@ export default {
         set(v) { return $store.dispatch('login/set', ['state', 'password', v]) }
       }),
     })
-    const login = () => {
-      axios.post('/login')
+    const login = async () => {
+      let post = await axios.post('/login', creds)
+      $router.push(user.value.intendedUrl)
     }
     onMounted(() => {
     })
     return {
-      ...toRefs(state),
+      ...toRefs(creds),
+      user,
       login,
     }
   },
