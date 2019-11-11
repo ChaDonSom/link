@@ -41,8 +41,7 @@ export default {
   setup(props, context) {
     const $store  = context.root.$store
     const $router = context.root.$router
-    if ($store.state.login) $store.unregisterModule('login')
-    $store.registerModule('login', LoginModule)
+    $store.usesModule('login', LoginModule)
     const user  = ref(window.user)
     const creds = reactive({
       email: computed({
@@ -56,7 +55,7 @@ export default {
     })
     const login = async () => {
       let post = await axios.post('/login', creds)
-      $router.push(user.value.intendedUrl)
+      $router.push($store.getters['auth/intended'])
     }
     onMounted(() => {
     })

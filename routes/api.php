@@ -9,4 +9,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::middleware('auth:api')->group(function () {
   Route::get('/old/checks', 'OldController@checks');
   Route::get('/old/bills', 'OldController@bills');
+  
+  Route::resource('checks', 'CheckController');
+  Route::resource('bills', 'BillController');
 });

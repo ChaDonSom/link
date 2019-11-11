@@ -7,9 +7,9 @@ import Login   from '@pages/Login.vue'
 import Welcome from '@pages/Welcome.vue'
 
 const routes = [
-  { path: '/',        component: Home, },
-  { path: '/login',   component: Login, },
-  { path: '/welcome', component: Welcome, }
+  { path: '/',        component: Home,    props: true },
+  { path: '/login',   component: Login,   props: true },
+  { path: '/welcome', component: Welcome, props: true }
 ]
 
 const router = new VueRouter({

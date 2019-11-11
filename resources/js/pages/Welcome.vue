@@ -36,6 +36,9 @@ import { appUrl, user, session } from '@traits/AccessesHeadMeta'
 export default {
   name: "Welcome",
   components: { FlatPickr, Grid, GridInner, Cell, MdcButton, ButtonIcon, ButtonLabel },
+  props: {
+    intended: true,
+  },
   setup(props, context) {
     const state = reactive({
       user: window.user,
