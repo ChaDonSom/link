@@ -38,16 +38,16 @@ export default {
     const user  = ref(window.user)
     const creds = reactive({
       email: computed({
-        get() { return $store.getters['login/email'] },
-        set(v) { return $store.dispatch('login/set', ['state', 'email', v]) }
+        get() { return $store.getters['register/email'] },
+        set(v) { return $store.dispatch('register/set', ['state', 'email', v]) }
       }),
       password: computed({
-        get() { return $store.getters['login/password'] },
-        set(v) { return $store.dispatch('login/set', ['state', 'password', v]) }
+        get() { return $store.getters['register/password'] },
+        set(v) { return $store.dispatch('register/set', ['state', 'password', v]) }
       }),
     })
     const register = async () => {
-      let post = await axios.post('/login', creds)
+      let post = await axios.post('/register', creds)
       $router.push($store.getters['auth/intended'])
     }
     onMounted(() => {
