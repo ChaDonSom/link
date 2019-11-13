@@ -20,7 +20,7 @@
 import Vue from '@js/bootstrap'
 import { reactive, onMounted, toRefs, computed, ref } from '@vue/composition-api'
 import { mapGetters, mapActions } from 'vuex'
-import LoginModule from '@store/Login'
+import RegisterModule from '@store/Register'
 import FlatPickr from 'flatpickr'
 import Grid from '@mdc/grid.vue'
 import GridInner from '@mdc/grid-inner.vue'
@@ -34,7 +34,7 @@ export default {
   setup(props, context) {
     const $store  = context.root.$store
     const $router = context.root.$router
-    $store.usesModule('login', LoginModule)
+    $store.usesModule('register', RegisterModule)
     const user  = ref(window.user)
     const creds = reactive({
       email: computed({
