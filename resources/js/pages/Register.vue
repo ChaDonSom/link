@@ -10,7 +10,7 @@
       </cell>
       <cell :span="12" class="flex-center">
         <mdc-button raised color="secondary" big
-            @click="login">Register</mdc-button>
+            @click="register">Register</mdc-button>
       </cell>
     </grid-inner>
   </grid>
@@ -46,7 +46,7 @@ export default {
         set(v) { return $store.dispatch('login/set', ['state', 'password', v]) }
       }),
     })
-    const login = async () => {
+    const register = async () => {
       let post = await axios.post('/login', creds)
       $router.push($store.getters['auth/intended'])
     }
@@ -55,7 +55,7 @@ export default {
     return {
       ...toRefs(creds),
       user,
-      login,
+      register,
     }
   },
 }
