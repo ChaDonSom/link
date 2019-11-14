@@ -1,5 +1,5 @@
 <template>
-  <grid>
+  <grid v-cloak>
     <grid-inner>
       <cell :span="12" class="flex-center"><h2>Login</h2></cell>
       <cell :span="12" class="flex-center">

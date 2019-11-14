@@ -3,7 +3,8 @@ import { store } from '@store'
 
 const guestRoutes = [
   '/welcome',
-  '/login'
+  '/login',
+  '/register'
 ]
 
 export function auth(to, from, next) {

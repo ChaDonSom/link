@@ -1,5 +1,5 @@
 <template>
-  <grid>
+  <grid v-cloak>
     <grid-inner>
       <cell :span="12" class="centerer">
         <mdc-button @click="logout">Log out</mdc-button>
