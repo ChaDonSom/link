@@ -9,12 +9,12 @@
         <textfield type="password" v-model="password">Password</textfield>
       </cell>
       <cell :span="12" class="flex-center">
-        <div>
-          Remember me
-        </div>
-        <div>
-          Forgot password?
-        </div>
+        <!--<div>-->
+        <!--  Remember me-->
+        <!--</div>-->
+        <!--<div>-->
+        <!--  Forgot password?-->
+        <!--</div>-->
       </cell>
       <cell :span="12" class="flex-center">
         <mdc-button raised color="secondary" big
