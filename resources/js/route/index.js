@@ -19,6 +19,18 @@ const router = new VueRouter({
 })
 
 router.beforeEach(auth)
+router.beforeEach((to, from, next) => {
+  let $store = router.app.$store
+  if ($store) {
+    let modules = $store.state.modules
+    if (modules) {
+      for (let module of modules) {
+        $store.unregisterModule(module)
+      }
+    }
+  }
+  next()
+})
 
 export {
   router

@@ -1,5 +1,5 @@
 // Route guards
-import authModule from '@store/modules/auth'
+import { store } from '@store'
 
 const guestRoutes = [
   '/welcome',
@@ -7,9 +7,11 @@ const guestRoutes = [
 ]
 
 export function auth(to, from, next) {
-  if (authModule.getters.user) next()
-  else if (!guestRoutes.includes(to.path)) {
-    authModule.commit('saveIntended', from)
+  if (store.getters['auth/user']) {
+    if (guestRoutes.includes(to.path)) next('/')
+    else next()
+  } else if (!guestRoutes.includes(to.path)) {
+    if (!guestRoutes.includes(from.path)) store.commit('auth/saveIntended', from)
     next('/welcome')
   }
   else next()

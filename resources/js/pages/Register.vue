@@ -3,10 +3,16 @@
     <grid-inner>
       <cell :span="12" class="flex-center"><h2>Register</h2></cell>
       <cell :span="12" class="flex-center">
+        <textfield v-model="name">Name</textfield>
+      </cell>
+      <cell :span="12" class="flex-center">
         <textfield type="email" v-model="email">Email</textfield>
       </cell>
       <cell :span="12" class="flex-center">
         <textfield type="password" v-model="password">Password</textfield>
+      </cell>
+      <cell :span="12" class="flex-center">
+        <textfield type="password" v-model="password_confirmation">Confirm Password</textfield>
       </cell>
       <cell :span="12" class="flex-center">
         <mdc-button raised color="secondary" big
@@ -37,6 +43,10 @@ export default {
     $store.usesModule('register', RegisterModule)
     const user  = ref(window.user)
     const creds = reactive({
+      name: computed({
+        get() { return $store.getters['register/name'] },
+        set(v) { return $store.dispatch('register/set', ['state', 'name', v]) }
+      }),
       email: computed({
         get() { return $store.getters['register/email'] },
         set(v) { return $store.dispatch('register/set', ['state', 'email', v]) }
@@ -44,6 +54,10 @@ export default {
       password: computed({
         get() { return $store.getters['register/password'] },
         set(v) { return $store.dispatch('register/set', ['state', 'password', v]) }
+      }),
+      password_confirmation: computed({
+        get() { return $store.getters['register/password_confirmation'] },
+        set(v) { return $store.dispatch('register/set', ['state', 'password_confirmation', v]) }
       }),
     })
     const register = async () => {

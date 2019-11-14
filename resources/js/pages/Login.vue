@@ -54,8 +54,11 @@ export default {
       }),
     })
     const login = async () => {
-      let post = await axios.post('/login', creds)
-      $router.push($store.getters['auth/intended'])
+      let post = await axios.post('/login', creds, { headers: {
+        Accepts: 'application/json'
+      }})
+      // $router.push($store.getters['auth/intended'])
+      location.reload()
     }
     onMounted(() => {
     })

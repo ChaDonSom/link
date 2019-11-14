@@ -32,6 +32,10 @@ export default {
     async fetch({ dispatch, getters }, p) {
       let request = await axios.get('/api/checks')
       if (getters.includeOld) var requestForOld = await axios.get('/api/old/checks')
+      
+      if (request.status !== 200) return console.error("Request failed: ", request)
+      if (requestForOld && requestForOld.status !== 200) return console.error("Request for legacy failed: ", requestForOld)
+      
       dispatch('set', ['', 'data', request.data.reduce((acc, curr) => {
         acc[curr.id] = { ...curr, uid: curr.id }
         return acc
