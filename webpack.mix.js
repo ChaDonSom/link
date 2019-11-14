@@ -11,6 +11,7 @@ var webpackConfig = {
       '@mdc': path.resolve(__dirname, 'resources/js/mdc'),
       '@pages': path.resolve(__dirname, 'resources/js/pages'),
       '@store': path.resolve(__dirname, 'resources/js/store'),
+      '@route': path.resolve(__dirname, 'resources/js/route'),
     }
   },
 }
@@ -34,6 +35,8 @@ mix.extend('scssForVue', (wc, ...args) => {
     }
   }
 })
+
+if (mix.inProduction()) mix.version()
 
 mix
   .js('resources/js/app.js', 'public/js')

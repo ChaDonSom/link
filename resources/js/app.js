@@ -1,7 +1,6 @@
-require('bootstrap')
+import { Vue } from '@js/bootstrap'
 
 import { store, router } from '@js/vue-setup'
-import Vue from 'vue'
 
 const app = new Vue({
   store,

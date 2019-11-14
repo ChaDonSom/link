@@ -45,7 +45,7 @@ export default {
     })
     const handleDrag = e => {
       let direction = e.dx > 0 ? 'right' : 'left'
-      dragInstance.value.
+      dragInstance.value // #WIP
       pos.x += e.dx
       pos.y += e.dy
       pos.r = pos.x / 10
