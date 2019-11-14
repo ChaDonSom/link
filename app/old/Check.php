@@ -9,7 +9,7 @@ class Check extends Model
 {
     // Columns: date, amount, created_at, updated_at, deleted_at
     protected $connection = 'tld';
-    protected $table = 'budget_checks';
+    protected $table = 'budget_paychecks';
     protected $casts = [
         'date' => 'date',
     ];
