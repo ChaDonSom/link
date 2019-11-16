@@ -63,7 +63,7 @@ export default {
     }
 
     onMounted(() => {
-      $store.dispatch('bills/fetch')
+      // $store.dispatch('bills/fetch')
       $store.dispatch('checks/fetch')
     })
     return {
