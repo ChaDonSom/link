@@ -32,6 +32,7 @@
 <script>
 import { computed, reactive, onMounted, ref } from '@vue/composition-api'
 import interact from 'interactjs'
+import moment from 'moment'
 import CheckCard from '@comps/CheckCard'
 import { DragInstance } from '@store/modules/drag-events'
 export default {
@@ -62,22 +63,6 @@ export default {
       opacity: lastPos.o,
       zIndex: lastPos.z,
     }))
-
-    const currentDrag = ref(null)
-
-    const handleDragStart = e => currentDrag.value = new DragInstance($store, e)
-
-    const handleDrag = e => {
-      currentDrag.value.addEvent(e)
-      let draggingDirection = currentDrag.value.draggingDirection
-      let direction = currentDrag.value.initialDirection
-      let _card = card.value
-      if (direction && direction.includes('up')) {
-        _card.off(e)
-      } else if (direction && direction.includes('down')) {
-        _card.on(e)
-      }
-    }
     
     const tossed = ref([])
     const card = computed(() => {
@@ -88,6 +73,10 @@ export default {
         pos.y += e.dy
         pos.r = pos.x / 10
         lastPos.z = 1
+        let endingDistance = Math.sqrt(Math.pow(pos.x, 2) + Math.pow(pos.y, 2))
+        let maxDistance = 100
+        let o = maxDistance / endingDistance
+        pos.o = o < 1 ? o : 1
         // lastPos.o = 0
       }
       value.on = function(e) {
@@ -109,7 +98,10 @@ export default {
         lastPos.x += e.dx
         lastPos.y += e.dy
         lastPos.r = lastPos.x / 10
-        lastPos.o = 1
+        let endingDistance = Math.sqrt(Math.pow(lastPos.x, 2) + Math.pow(lastPos.y, 2))
+        let maxDistance = 100
+        let o = maxDistance / endingDistance
+        lastPos.o = o < 1 ? o : 1
         lastPos.z = 3
       }
       value.next = function() {
@@ -158,11 +150,20 @@ export default {
         })
         this.cleanup('prev')
       }
-      value.stay = function() {
+      value.stay = function(tried) {
         // tween them back to 0
         this.style.transition = "transform 0.2s ease-out"
         lastTopcard.value.style.transition = "opacity 0.2s ease-out"
         pos.x = pos.y = pos.r = 0
+        if (tried === 'prev') {
+          if (value.tossed.value.length && lastPos.placed) {
+            let tossed = value.tossed.value[value.tossed.value.length - 1]
+            lastPos.x = tossed.x
+            lastPos.y = tossed.y
+            lastPos.r = tossed.r
+            lastPos.o = 0
+          }
+        }
         this.cleanup()
       }
       value.cleanup = function(going) {
@@ -179,14 +180,33 @@ export default {
       }
       return value
     })
+
+    const currentDrag = ref(null)
+
+    const handleDragStart = e => currentDrag.value = new DragInstance($store, e)
+
+    const handleDrag = e => {
+      currentDrag.value.addEvent(e)
+      let draggingDirection = currentDrag.value.draggingDirection
+      let direction = currentDrag.value.initialDirection
+      let _card = card.value
+      if (direction && direction.includes('up')) {
+        _card.off(e)
+      } else if (direction && direction.includes('down')) {
+        _card.on(e)
+      }
+    }
     
     const handleDragEnd = e => {
       let direction = currentDrag.value.initialDirection
-      let endingPosition = direction.includes('up') ? pos.y + e.dy : lastPos.y + e.dy
-      let endingDistance = Math.abs(endingPosition)
+      let posToTrack = direction.includes('up') ? pos : lastPos
+      let endingY = posToTrack.y + e.dy
+      let endingX = posToTrack.x + e.dx
+      let endingDistance = Math.sqrt(Math.pow(endingX, 2) + Math.pow(endingY, 2))
+      endingDistance = Math.abs(endingDistance)
       let hasTossed = tossed.value.length > 0
       let goUp  = direction.includes('up') && endingDistance > 150
-      let goDown = direction.includes('down') && endingDistance < 250 && hasTossed
+      let goDown = direction.includes('down') && endingDistance < 300 && hasTossed
       let dontGo  = endingDistance < 150
       let _card = card.value
       if (goUp) {
@@ -195,14 +215,25 @@ export default {
         _card.prev()
       } else {
         // dont increment the cards
-        _card.stay()
+        _card.stay(direction.includes('down') ? 'prev' : 'next')
       }
       currentDrag.value.done()
     }
     
-    const lastTopIndex = ref(-1)
-    const topIndex  = ref(0)
-    const nextIndex = ref(1)
+    // Find current check
+    const currentCheckAtLoad = $store.getters['checks/findIndexByDate'](moment())
+    
+    for (let x = currentCheckAtLoad - 1; x > 0; x--) {
+      let toss = {}
+      toss.x = 150  * ((Math.random() * 2) - 1)
+      toss.y = -240 * (Math.random() + 1)
+      toss.r = 12
+      tossed.value = [ ...tossed.value, toss ]
+    }
+    
+    const lastTopIndex = ref(currentCheckAtLoad - 1)
+    const topIndex  = ref(currentCheckAtLoad)
+    const nextIndex = ref(currentCheckAtLoad + 1)
     // const safetyValueAtIndex = i => () => {
     //   let val = props.value[i]
     //   if (i) return val
@@ -232,7 +263,8 @@ export default {
       lastTop,
       top,
       next,
-      card
+      card,
+      tossed,
     }
   }
 }
