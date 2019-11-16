@@ -2,6 +2,15 @@
   <div class="main">
     <div class="inner">
       <div class="top card"
+          ref="lastTopcard"
+          :style="lastTopCardStyle"
+      >
+        <CheckCard
+            v-if="lastTop"
+            v-model="lastTop"
+        />
+      </div>
+      <div class="top card"
           ref="topcard"
           :style="topCardStyle"
       >
@@ -24,6 +33,7 @@
 import { computed, reactive, onMounted, ref } from '@vue/composition-api'
 import interact from 'interactjs'
 import CheckCard from '@comps/CheckCard'
+import { DragInstance } from '@store/modules/drag-events'
 export default {
   name: "CheckStack",
   components: { CheckCard },
@@ -31,26 +41,12 @@ export default {
     value: Array
   },
   setup(props, context) {
+    const $store = context.root.$store
     const checks = computed(() => props.value)
     const topcard = ref(null)
+    const lastTopcard = ref(null)
     
     const pos = reactive({ x: 0, y: 0, r: 0, o: 1 })
-
-    const dragInstance = ref({
-      historyLength: 10,
-      history: [],
-      reset: () => {
-        dragInstance.value.history = []
-      }
-    })
-    const handleDrag = e => {
-      let direction = e.dx > 0 ? 'right' : 'left'
-      dragInstance.value // #WIP
-      pos.x += e.dx
-      pos.y += e.dy
-      pos.r = pos.x / 10
-    }
-    
     const topCardStyle = computed(() => ({
       transform: `translateX(${pos.x}px)
                   translateY(${pos.y}px)
@@ -58,77 +54,185 @@ export default {
       opacity: pos.o
     }))
     
+    const lastPos = reactive({ x: 0, y: 0, r: 0, o: 0, placed: false })
+    const lastTopCardStyle = computed(() => ({
+      transform: `translateX(${lastPos.x}px)
+                  translateY(${lastPos.y}px)
+                  rotate(${lastPos.r}deg)`,
+      opacity: lastPos.o,
+      zIndex: lastPos.z,
+    }))
+
+    const currentDrag = ref(null)
+
+    const handleDragStart = e => currentDrag.value = new DragInstance($store, e)
+
+    const handleDrag = e => {
+      currentDrag.value.addEvent(e)
+      let draggingDirection = currentDrag.value.draggingDirection
+      let direction = currentDrag.value.initialDirection
+      let _card = card.value
+      if (direction && direction.includes('up')) {
+        _card.off(e)
+      } else if (direction && direction.includes('down')) {
+        _card.on(e)
+      }
+    }
+    
+    const tossed = ref([])
     const card = computed(() => {
       let value = topcard.value
+      value.tossed = tossed
+      value.off = function(e) {
+        pos.x += e.dx
+        pos.y += e.dy
+        pos.r = pos.x / 10
+        lastPos.z = 1
+        // lastPos.o = 0
+      }
+      value.on = function(e) {
+        if (!value.tossed.value.length) {
+          let xAmp = Math.abs(pos.x + e.dx)
+          let yAmp = Math.abs(pos.y + e.dy)
+          pos.x += (e.dx * ( 1/xAmp ) )
+          pos.y += (e.dy * ( 1/yAmp ) )
+          pos.r = pos.x / 30
+          return
+        }
+        if (value.tossed.value.length && !lastPos.placed) {
+          let tossed = value.tossed.value[value.tossed.value.length - 1]
+          lastPos.x = tossed.x
+          lastPos.y = tossed.y
+          lastPos.r = tossed.r
+          lastPos.placed = true
+        }
+        lastPos.x += e.dx
+        lastPos.y += e.dy
+        lastPos.r = lastPos.x / 10
+        lastPos.o = 1
+        lastPos.z = 3
+      }
       value.next = function() {
+        console.log('next check')
         pos.o = 0 // hide card
         // need to update top card before transition
         topIndex.value++
+        lastTopIndex.value++
         setTimeout(() => {
+          let tossed = {}
+          tossed.x = lastPos.x = pos.x
+          tossed.y = lastPos.y = pos.y
+          tossed.r = lastPos.r = pos.r
+          value.tossed.value = [ ...value.tossed.value, tossed ]
+          lastPos.z = 1
           this.style.transition = "opacity 0.2s ease-out"
+          lastTopcard.value.style.transition = "opacity 0.2s ease-out"
           pos.x = pos.y = pos.r = 0
           pos.o = 1
         })
-        this.cleanup()
+        this.cleanup('next')
+      }
+      value.prev = function() {
+        console.log('previous check')
+        // pos.o = 0 // hide topcard
+        // need to update top card before transition
+        topIndex.value--
+        nextIndex.value--
+        pos.x = lastPos.x
+        pos.y = lastPos.y
+        pos.r = lastPos.r
+        setTimeout(() => {
+          let tossed = value.tossed.value
+          tossed.pop()
+          value.tossed.value = tossed
+          
+          this.style.transition = "opacity 0.2s ease-out, transform 0.2s ease-out"
+          
+          lastTopcard.value.style.transition = "transform 0.2s ease-out"
+          lastPos.o = 0
+          pos.x = lastPos.x = 0
+          pos.y = lastPos.y = 0
+          pos.r = lastPos.r = 0
+          lastPos.z = 1
+          // pos.o = 1
+        })
+        this.cleanup('prev')
       }
       value.stay = function() {
         // tween them back to 0
         this.style.transition = "transform 0.2s ease-out"
+        lastTopcard.value.style.transition = "opacity 0.2s ease-out"
         pos.x = pos.y = pos.r = 0
         this.cleanup()
       }
-      value.cleanup = function() {
+      value.cleanup = function(going) {
         setTimeout(() => {
           this.style.transition = null
-          nextIndex.value++
+          lastTopcard.value.style.transition = null
+          lastPos.placed = false
+          if (going === 'next') {
+            nextIndex.value++
+          } else if (going === 'prev') {
+            lastTopIndex.value--
+          }
         }, 200)
       }
       return value
     })
     
     const handleDragEnd = e => {
-      let endingPosition = pos.x + e.dx
+      let direction = currentDrag.value.initialDirection
+      let endingPosition = direction.includes('up') ? pos.y + e.dy : lastPos.y + e.dy
       let endingDistance = Math.abs(endingPosition)
-      let direction = endingPosition > 0 ? 'right' : 'left'
+      let hasTossed = tossed.value.length > 0
+      let goUp  = direction.includes('up') && endingDistance > 150
+      let goDown = direction.includes('down') && endingDistance < 250 && hasTossed
+      let dontGo  = endingDistance < 150
       let _card = card.value
-      if (endingDistance > 250) {
-        if (direction === 'left') {
-          _card.next()
-        } else {
-          _card.prev()
-        }
+      if (goUp) {
+        _card.next()
+      } else if (goDown) {
+        _card.prev()
       } else {
         // dont increment the cards
         _card.stay()
       }
-      dragInstance.value.reset()
+      currentDrag.value.done()
     }
     
+    const lastTopIndex = ref(-1)
     const topIndex  = ref(0)
     const nextIndex = ref(1)
     // const safetyValueAtIndex = i => () => {
     //   let val = props.value[i]
-    //   console.log(props.value.length)
     //   if (i) return val
     //   return {}
     // }
+    const lastTop = computed(() => props.value[lastTopIndex.value])
     const top  = computed(() => props.value[topIndex.value])
     const next = computed(() => props.value[nextIndex.value])
     
     onMounted(() => {
       interact(topcard.value)
         .draggable({
-          inertia: true,
+          inertia: {
+            resistance: 40,
+          },
         })
+        .on('dragstart', e => handleDragStart(e))
         .on('dragmove', e => handleDrag(e))
         .on('dragend',  e => handleDragEnd(e))
     })
     return {
       checks,
+      lastTopcard,
+      lastTopCardStyle,
       topcard,
       topCardStyle,
+      lastTop,
       top,
-      next
+      next,
+      card
     }
   }
 }

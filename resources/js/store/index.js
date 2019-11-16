@@ -16,17 +16,21 @@ const store = new Vuex.Store({
   }
 })
 
-store.usesModule = function(name, module) {
-  if (this.state[name]) this.unregisterModule(name)
-  this.registerModule(name, module)
-  this.dispatch('set', ['', 'modules', [
+store.usesModule = function(name, module, nicely) {
+  if (!nicely) {
+    if (this.state.modules.includes(name)) this.unregisterModule(name)
+    this.registerModule(name, module)
+  } else /* if nicely */ {
+    if (!this.state.modules.includes(name)) this.registerModule(name, module)
+  }
+  if (!this.state.modules.includes(name)) this.commit('set', ['modules', [
     ...this.state.modules,
     name
   ]])
 }
-store.usesModules = function(modulesRegistry) {
+store.usesModules = function(modulesRegistry, nicely) {
   Object.keys(modulesRegistry).forEach(key => {
-    this.usesModule(key, modulesRegistry[key])
+    this.usesModule(key, modulesRegistry[key], nicely)
   })
 }
 
