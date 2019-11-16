@@ -45,6 +45,7 @@ export default {
     })
     
     onMounted(() => {
+      console.log('v1')
     })
     return {
       ...toRefs(state),
