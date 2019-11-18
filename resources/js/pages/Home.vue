@@ -8,20 +8,32 @@
         <CheckStack
             v-if="checks && checks.length"
             v-model="checks"
+            @new-check="newCheck"
         />
       </cell>
     </grid-inner>
+    <Modal
+        v-model="currentAddingCheck"
+        @close="closeNewCheck"
+    >
+      <template v-slot="{ value }">
+        <p>{{ value.amount }}</p>
+        <p>{{ value.date }}</p>
+        <p>{{ value.label }}</p>
+      </template>
+    </Modal>
   </grid>
 </template>
 
 <script>
 import Vue from '@js/bootstrap'
-import { reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount, computed } from '@vue/composition-api'
+import { reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount, computed, ref } from '@vue/composition-api'
 import FlatPickr from 'flatpickr'
 import { appUrl, user, session } from '@traits/AccessesHeadMeta'
 import axios from 'axios'
 import BillsModule from '@store/modules/bills'
 import ChecksModule from '@store/modules/checks'
+import Modal from '@comps/Modal'
 import Grid from '@mdc/grid.vue'
 import GridInner from '@mdc/grid-inner.vue'
 import Cell from '@mdc/cell.vue'
@@ -29,7 +41,7 @@ import CheckStack from '@comps/CheckStack'
 import MdcButton from '@mdc/button'
 export default {
   name: "Home",
-  components: { FlatPickr, Grid, GridInner, Cell, CheckStack, MdcButton },
+  components: { FlatPickr, Grid, GridInner, Cell, CheckStack, MdcButton, Modal },
   setup(props, context) {
     const $store = context.root.$store
     const $router = context.root.$router
@@ -48,6 +60,12 @@ export default {
         set(v) {},
       })
     })
+    
+    const currentAddingCheck = ref(null)
+    const newCheck = (check) => {
+      currentAddingCheck.value = check
+    }
+    const closeNewCheck = () => currentAddingCheck.value = null
 
     const logout = async () => {
       try {
@@ -68,7 +86,10 @@ export default {
     })
     return {
       ...toRefs(render),
-      logout
+      logout,
+      newCheck,
+      closeNewCheck,
+      currentAddingCheck,
     }
   },
 }

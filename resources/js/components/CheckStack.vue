@@ -18,6 +18,13 @@
             v-if="top"
             v-model="top"
         />
+        <mdc-button
+            v-if="!top"
+            class="material-icons"
+            style="height: 100%; width: 100%;"
+            @click="newCheck"
+        >add
+        </mdc-button>
       </div>
       <div class="card stack">
         <CheckCard
@@ -34,16 +41,21 @@ import { computed, reactive, onMounted, ref } from '@vue/composition-api'
 import interact from 'interactjs'
 import moment from 'moment'
 import CheckCard from '@comps/CheckCard'
+import MdcButton from '@mdc/button'
 import { DragInstance } from '@store/modules/drag-events'
+import useCreateNewCheck from '@traits/CreateNewCheck'
 export default {
   name: "CheckStack",
-  components: { CheckCard },
+  components: { CheckCard, MdcButton },
   props: {
     value: Array
   },
   setup(props, context) {
     const $store = context.root.$store
     const checks = computed(() => props.value)
+    
+    const { newCheck } = useCreateNewCheck(props, context)
+    
     const topcard = ref(null)
     const lastTopcard = ref(null)
     
@@ -191,8 +203,12 @@ export default {
       let direction = currentDrag.value.initialDirection
       let _card = card.value
       if (direction && direction.includes('up')) {
+        if (!top.value) return
         _card.off(e)
       } else if (direction && direction.includes('down')) {
+        if (!top.value) {
+          if (currentDrag.value.events.length < 7) return
+        }
         _card.on(e)
       }
     }
@@ -251,8 +267,8 @@ export default {
           },
         })
         .on('dragstart', e => handleDragStart(e))
-        .on('dragmove', e => handleDrag(e))
-        .on('dragend',  e => handleDragEnd(e))
+        .on('dragmove',  e => handleDrag(e))
+        .on('dragend',   e => handleDragEnd(e))
     })
     return {
       checks,
@@ -265,6 +281,7 @@ export default {
       next,
       card,
       tossed,
+      newCheck,
     }
   }
 }
@@ -276,10 +293,11 @@ export default {
   .inner {
     position: relative;
     height: 70vh;
-    width: 0.61803398875 * 70vh;
+    width: calc((0.61803398875 * 70vh) + 40px);
     margin: auto;
     .card {
       position: absolute;
+      overflow: hidden;
       height: 70vh;
       width: 0.61803398875 * 70vh;
       box-shadow: 0 0 0 1.2px $card-outline;
