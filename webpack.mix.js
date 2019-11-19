@@ -7,6 +7,7 @@ var webpackConfig = {
       '@comps': path.resolve(__dirname, 'resources/js/components'),
       'sass': path.resolve(__dirname, 'resources/sass'),
       '@traits': path.resolve(__dirname, 'resources/js/traits'),
+      '@helpers': path.resolve(__dirname, 'resources/js/helpers'),
       '@blocks': path.resolve(__dirname, 'resources/js/components/blocks'),
       '@mdc': path.resolve(__dirname, 'resources/js/mdc'),
       '@pages': path.resolve(__dirname, 'resources/js/pages'),
