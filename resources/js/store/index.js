@@ -27,11 +27,11 @@ const store = new Vuex.Store({
 
 
 let cacheUnregisterModule = store.unregisterModule
-store.unregisterModule = name => {
+store.unregisterModule = function(name) {
   console.log('module name:', name)
-  store.commit('removeModule', name)
-  console.log('modules left: ', store.state.modules.reduce((c, a) => a +' '+ c, ''))
-  cacheUnregisterModule.apply(store, name)
+  this.commit('removeModule', name)
+  console.log('modules left: ', this.state.modules.reduce((c, a) => a +' '+ c, ''))
+  cacheUnregisterModule(name)
 }
 
 store.usesModule = function(name, module, nicely) {
