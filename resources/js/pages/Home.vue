@@ -31,6 +31,7 @@ import { reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount, computed, 
 import FlatPickr from 'flatpickr'
 import { appUrl, user, session } from '@traits/AccessesHeadMeta'
 import axios from 'axios'
+import { logout } from '@helpers/logout'
 import BillsModule from '@store/modules/bills'
 import ChecksModule from '@store/modules/checks'
 import Modal from '@comps/Modal'
@@ -46,15 +47,10 @@ export default {
     const $store = context.root.$store
     const $router = context.root.$router
     $store.usesModules({
-      bills: BillsModule,
       checks: ChecksModule
     })
     
     const render = reactive({
-      bills: computed({
-        get() { return $store.getters['bills/data'] },
-        set(v) {},
-      }),
       checks: computed({
         get() { return $store.getters['checks/array'] },
         set(v) {},
@@ -67,21 +63,7 @@ export default {
     }
     const closeNewCheck = () => currentAddingCheck.value = null
 
-    const logout = async () => {
-      try {
-        let request = await axios.post('/logout', {}, { headers: {
-          accept: 'application/json'
-        }})
-        location.reload()
-      } catch (e) {
-        if (e && e.response && e.response.status === 419) {
-          location.reload()
-        }
-      }
-    }
-
     onMounted(() => {
-      // $store.dispatch('bills/fetch')
       $store.dispatch('checks/fetch')
     })
     return {

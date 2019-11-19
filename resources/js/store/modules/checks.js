@@ -25,6 +25,10 @@ export default {
       if (g.includeOld) return Object.keys(g.data).map(k => g.data[k])
       return Object.keys(s.data).map(k => s.data[k]).filter(check => !check.is_legacy)
     },
+    getCheckById: (s, g) => id => {
+      let checks = g.array
+      return checks.find(check => check.id === id)
+    },
     findIndexByDate: (s, g) => date => {
       let checks = g.array
       return checks.findIndex(check => {
@@ -35,7 +39,7 @@ export default {
         let date  = moment(date)
         return date.diff(start) >= 0 && end.diff(date) > 0
       })
-    }
+    },
   },
   mutations: {
     ...mutations,

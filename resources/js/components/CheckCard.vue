@@ -6,17 +6,26 @@
     <p class="align-money">Used: {{ dollars(used) }}</p>
     <p class="align-money">Leftover: {{ leftover }}</p>
     <div class="consumption-bar" :style="consumptionBarStyle"></div>
+    <mdc-button tag="router-link" :to="`/check/${value.id}`">
+      <button-label>Open</button-label>
+      <button-icon>chevron_right</button-icon>
+    </mdc-button>
   </div>
 </template>
 
 <script>
 import { computed } from '@vue/composition-api'
 import moment from 'moment'
+import { dollars, rounded } from '@js/helpers/currency'
+import MdcButton from '@mdc/button'
+import ButtonLabel from '@mdc/button-label'
+import ButtonIcon from '@mdc/button-icon'
 export default {
   name: "CheckCard",
   props: {
     value: true
   },
+  components: { MdcButton, ButtonLabel, ButtonIcon, },
   setup(props, context) {
     // Date
     const date = computed(() => moment.utc(props.value.date))
@@ -26,9 +35,6 @@ export default {
     const monthDay = computed(() => date.value.format('MMMM Do'))
     
     // Money
-    const dollars = value => `$${rounded(value, 2)}`
-    const rounded = value => (Math.round(value * 100) / 100).toFixed(2)
-    
     const used = computed(() => props.value.bills.reduce((acc, curr) => {
       return acc + curr.amount
     }, 0))
@@ -47,6 +53,7 @@ export default {
         '--percent-readable': `'${percent * 100}%'`
       }
     })
+    
     return {
       date,
       day,
