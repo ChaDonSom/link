@@ -26,17 +26,16 @@ const store = new Vuex.Store({
 })
 
 
-let cacheUnregisterModule = store.unregisterModule
-store.unregisterModule = function(name) {
+store.unuseModule = function(name) {
   console.log('module name:', name)
   this.commit('removeModule', name)
   console.log('modules left: ', this.state.modules.reduce((c, a) => a +' '+ c, ''))
-  cacheUnregisterModule(name)
+  this.unregisterModule(name)
 }
 
 store.usesModule = function(name, module, nicely) {
   if (!nicely) {
-    if (this.state.modules.includes(name)) this.unregisterModule(name)
+    if (this.state.modules.includes(name)) this.unuseModule(name)
     this.registerModule(name, module)
   } else /* if nicely */ {
     if (!this.state.modules.includes(name)) this.registerModule(name, module)
