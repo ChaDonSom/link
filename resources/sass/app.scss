@@ -10,3 +10,8 @@
 // @import '~bootstrap/scss/bootstrap';
 
 [v-cloak] { display: none; }
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+}

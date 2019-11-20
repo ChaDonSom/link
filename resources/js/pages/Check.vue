@@ -37,7 +37,7 @@
 <script>
 import { logout } from '@helpers/logout'
 import { dollars } from '@helpers/currency'
-import { reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount, computed, ref } from '@vue/composition-api'
+import { reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount, computed, ref, watch } from '@vue/composition-api'
 import moment from 'moment'
 import useCheckDisplay from '@traits/UseCheckDisplay'
 import Grid from '@mdc/grid.vue'
@@ -77,6 +77,13 @@ export default {
         return $store.getters['checks/getCheckById'](Number(props.id))
       },
       set: v => {}
+    })
+    const recordedCheckVisit = ref(false)
+    watch(() => check.value, () => {
+      if (check.value && check.value.id && !recordedCheckVisit.value) {
+        $store.commit('checks/recordVisit', check.value)
+        recordedCheckVisit.value = true
+      }
     })
     
     const date = bill => moment.utc(bill.date).local()

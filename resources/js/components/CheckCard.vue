@@ -9,7 +9,9 @@
     <mdc-button
         tag="router-link"
         :to="`/check/${value.id}`"
-        style="margin: 0 calc(50% - 37px);"
+        style="margin: 0 calc(50% - 68.5px);"
+        big
+        @click.stop="() => {}"
     >
       <button-label>Open</button-label>
       <button-icon>chevron_right</button-icon>
