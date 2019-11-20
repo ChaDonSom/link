@@ -9,6 +9,8 @@ export default {
     data: {},
     oldData: {},
     includeOld: true,
+    open: null,
+    opens: [],
   },
   getters: {
     includeOld: s => s.includeOld,
@@ -40,9 +42,23 @@ export default {
         return date.diff(start) >= 0 && end.diff(date) > 0
       })
     },
+    last: (s, g) =>  s.opens[s.opens.length - 1],
+    lastIndex: (s, g) => {
+      let checks = g.array
+      let last = g.last
+      if (!last) return false
+      return checks.findIndex(check => check.id === last.id)
+    }
   },
   mutations: {
     ...mutations,
+    recordVisit: (s, p) => {
+      s.open = p
+      s.opens = [
+        ...s.opens,
+        p,
+      ]
+    }
   },
   actions: {
     ...actions,

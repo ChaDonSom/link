@@ -30,13 +30,13 @@
         <grid>
           <grid-inner>
             <cell :span="12">
-              <textfield v-model="value.label">For</textfield>
+              <textfield v-model="value.label" outlined>For</textfield>
             </cell>
             <cell :span="12">
-              <textfield type="number" v-model="value.amount">Amount</textfield>
+              <textfield type="number" v-model="value.amount" outlined>Amount</textfield>
             </cell>
             <cell :span="12">
-              <textfield type="date" v-model="value.date">Date</textfield>
+              <textfield type="date" v-model="value.date" outlined>Date</textfield>
             </cell>
             <cell :span="12">
               <mdc-button @click="saveNewBill"
@@ -61,6 +61,7 @@ import { appUrl, user, session } from '@traits/AccessesHeadMeta'
 import moment from 'moment'
 import axios from 'axios'
 import { logout } from '@helpers/logout'
+import useCreateBill from '@traits/CreateBill'
 import BillsModule from '@store/modules/bills'
 import ChecksModule from '@store/modules/checks'
 import Modal from '@comps/Modal'
@@ -106,16 +107,12 @@ export default {
     }
     const closeNewCheck = () => currentAddingCheck.value = null
     
-    const currentAddingBill = ref(null)
-    const newBill = () => {
-      currentAddingBill.value = {
-        amount: 0,
-        date: moment().format("MM/DD/YYYY"),
-        label: '',
-      }
-    }
-    const saveNewBill = () => {}
-    const closeNewBill = () => currentAddingBill.value = null
+    const {
+      currentAddingBill,
+      newBill,
+      saveNewBill,
+      closeNewBill
+    } = useCreateBill()
 
     onMounted(() => {
       $store.dispatch('checks/fetch')

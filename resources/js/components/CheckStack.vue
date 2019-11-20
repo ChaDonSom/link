@@ -22,9 +22,8 @@
             v-if="!top"
             class="material-icons"
             style="height: 100%; width: 100%;"
-            @click="newCheck"
-        >add
-        </mdc-button>
+            @click.stop="newCheck"
+        >add</mdc-button>
       </div>
       <div class="card stack">
         <CheckCard
@@ -67,7 +66,7 @@ export default {
       opacity: pos.o
     }))
     
-    const lastPos = reactive({ x: 0, y: 0, r: 0, o: 0, placed: false })
+    const lastPos = reactive({ x: 0, y: 0, r: 0, o: 0, z: 0, placed: false })
     const lastTopCardStyle = computed(() => ({
       transform: `translateX(${lastPos.x}px)
                   translateY(${lastPos.y}px)
@@ -128,7 +127,7 @@ export default {
           tossed.y = lastPos.y = pos.y
           tossed.r = lastPos.r = pos.r
           value.tossed.value = [ ...value.tossed.value, tossed ]
-          lastPos.z = 1
+          lastPos.z = 0
           this.style.transition = "opacity 0.2s ease-out"
           lastTopcard.value.style.transition = "opacity 0.2s ease-out"
           pos.x = pos.y = pos.r = 0
@@ -236,10 +235,14 @@ export default {
       currentDrag.value.done()
     }
     
-    // Find current check
-    const currentCheckAtLoad = $store.getters['checks/findIndexByDate'](moment())
+    // Find check for now()
+    const activeCheckAtLoad = $store.getters['checks/findIndexByDate'](moment())
+    // Find check last visited
+    let lastCheck = $store.getters['checks/lastIndex']
     
-    for (let x = currentCheckAtLoad - 1; x > 0; x--) {
+    let indexToShow = lastCheck !== false ? lastCheck : activeCheckAtLoad
+    
+    for (let x = indexToShow - 1; x > 0; x--) {
       let toss = {}
       toss.x = 150  * ((Math.random() * 2) - 1)
       toss.y = -240 * (Math.random() + 1)
@@ -247,9 +250,9 @@ export default {
       tossed.value = [ ...tossed.value, toss ]
     }
     
-    const lastTopIndex = ref(currentCheckAtLoad - 1)
-    const topIndex  = ref(currentCheckAtLoad)
-    const nextIndex = ref(currentCheckAtLoad + 1)
+    const lastTopIndex = ref(indexToShow - 1)
+    const topIndex  = ref(indexToShow)
+    const nextIndex = ref(indexToShow + 1)
     // const safetyValueAtIndex = i => () => {
     //   let val = props.value[i]
     //   if (i) return val
@@ -265,6 +268,7 @@ export default {
           inertia: {
             resistance: 40,
           },
+          // ignoreFrom: 'a, button'
         })
         .on('dragstart', e => handleDragStart(e))
         .on('dragmove',  e => handleDrag(e))
