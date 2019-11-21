@@ -33,7 +33,9 @@ export default {
     const input = ref(null)
     const uid = ref(Math.round(Math.random() * 1000000))
     onMounted(() => {
-      if (props.tag !== 'router-link') textfield.value = new MDCTextField(main.value)
+      if (props.tag !== 'router-link') {
+        textfield.value = new MDCTextField(main.value)
+      }
       if (props.autofocus) input.value.addEventListener('focus', input.value.select)
     })
     return {

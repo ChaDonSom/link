@@ -7,13 +7,24 @@ export default (props, context) => {
   
   const currentEditingBill = ref(null)
   const editBill = bill => {
-    currentEditingBill.value = bill
+    let b = bill
+    b.date = moment(b.date).format("YYYY-MM-DD")
+    currentEditingBill.value = b
     // currentEditingBill.value.date = moment(bill.date).format("MM/DD/YY")
   }
   const saveBill = async () => {
-    let request = await axios.post('/bills', currentEditingBill.value)
+    let request = await axios.patch(`/bills/${currentEditingBill.value.id}`, currentEditingBill.value)
       .catch(e => console.warn(e))
-    $store.dispatch('checks/fetch')
+    closeBill()
+    await $store.dispatch('checks/fetch')
+    context.emit('bill-updated')
+  }
+  const deleteBill = async () => {
+    let request = await axios.delete(`/bills/${currentEditingBill.value.id}`)
+      .catch(e => console.warn(e))
+    closeBill()
+    await $store.dispatch('checks/fetch')
+    context.emit('bill-deleted')
   }
   const closeBill = () => currentEditingBill.value = null
   
@@ -21,6 +32,7 @@ export default (props, context) => {
     currentEditingBill,
     editBill,
     saveBill,
+    deleteBill,
     closeBill
   }
 }

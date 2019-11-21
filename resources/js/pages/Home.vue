@@ -26,7 +26,7 @@
         <grid>
           <grid-inner>
             <cell :span="12">
-              <textfield type="number" v-model="value.amount" autofocus>Amount</textfield>
+              <textfield type="number" v-model.number="value.amount" autofocus>Amount</textfield>
             </cell>
             <cell :span="12">
               <textfield type="date" v-model="value.date" autofocus>Date</textfield>

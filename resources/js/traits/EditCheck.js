@@ -7,12 +7,23 @@ export default (props, context) => {
   
   const currentEditingCheck = ref(null)
   const editCheck = check => {
-    currentAddingCheck.value = check
+    let c = check
+    c.date = moment(c.date).format("YYYY-MM-DD")
+    currentEditingCheck.value = c
   }
   const saveCheck = async () => {
-    let request = await axios.post('/checks', currentEditingCheck.value)
+    let request = await axios.patch(`/checks/${currentEditingCheck.value.id}`, currentEditingCheck.value)
       .catch(e => console.warn(e))
-    $store.dispatch('checks/fetch')
+    closeCheck()
+    await $store.dispatch('checks/fetch')
+    context.emit('check-updated')
+  }
+  const deleteCheck = async () => {
+    let request = await axios.delete(`/checks/${currentEditingCheck.value.id}`)
+      .catch(e => console.warn(e))
+    closeCheck()
+    await $store.dispatch('checks/fetch')
+    context.emit('check-deleted')
   }
   const closeCheck = () => currentEditingCheck.value = null
   
@@ -20,6 +31,7 @@ export default (props, context) => {
     currentEditingCheck,
     editCheck,
     saveCheck,
+    deleteCheck,
     closeCheck
   }
 }

@@ -9,7 +9,7 @@ export default (props, context) => {
   const newBill = () => {
     currentAddingBill.value = {
       amount: 0,
-      date: moment().format("MM/DD/YYYY"),
+      date: moment().format("YYYY-MM-DD"),
       label: '',
     }
   }
