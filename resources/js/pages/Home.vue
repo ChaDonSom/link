@@ -3,7 +3,6 @@
     <grid-inner>
       <cell :span="12">
         <mdc-button @click="logout">Log out</mdc-button>
-        <mdc-button @click="newBill">New bill</mdc-button>
       </cell>
       <cell :span="12">
         <CheckStack
@@ -12,14 +11,36 @@
             @new-check="newCheck"
         />
       </cell>
+      <cell :span="12" style="display: flex;">
+        <mdc-button @click="newCheck" style="margin: auto;">New check</mdc-button>
+      </cell>
+      <cell :span="12" style="display: flex;">
+        <mdc-button @click="newBill" style="margin: auto;">New bill</mdc-button>
+      </cell>
     </grid-inner>
     <Modal
         v-model="currentAddingCheck"
         @close="closeNewCheck"
     >
       <template v-slot="{ value }">
-        <p>{{ value.amount }}</p>
-        <p>{{ value.date }}</p>
+        <grid>
+          <grid-inner>
+            <cell :span="12">
+              <textfield type="number" v-model.number="value.amount" autofocus>Amount</textfield>
+            </cell>
+            <cell :span="12">
+              <textfield type="date" v-model="value.date" autofocus>Date</textfield>
+            </cell>
+            <cell :span="12">
+              <mdc-button @click="saveNewCheck"
+                style="margin: 0 calc(50% - 37px);"
+              >
+                <button-label>Save</button-label>
+                <button-icon>save</button-icon>
+              </mdc-button>
+            </cell>
+          </grid-inner>
+        </grid>
       </template>
     </Modal>
     <Modal
@@ -30,13 +51,13 @@
         <grid>
           <grid-inner>
             <cell :span="12">
-              <textfield v-model="value.label" outlined>For</textfield>
+              <textfield v-model="value.label" autofocus>For</textfield>
             </cell>
             <cell :span="12">
-              <textfield type="number" v-model="value.amount" outlined>Amount</textfield>
+              <textfield type="number" v-model="value.amount" autofocus>Amount</textfield>
             </cell>
             <cell :span="12">
-              <textfield type="date" v-model="value.date" outlined>Date</textfield>
+              <textfield type="date" v-model="value.date" autofocus>Date</textfield>
             </cell>
             <cell :span="12">
               <mdc-button @click="saveNewBill"
@@ -62,6 +83,7 @@ import moment from 'moment'
 import axios from 'axios'
 import { logout } from '@helpers/logout'
 import useCreateBill from '@traits/CreateBill'
+import useCreateCheck from '@traits/CreateCheck'
 import BillsModule from '@store/modules/bills'
 import ChecksModule from '@store/modules/checks'
 import Modal from '@comps/Modal'
@@ -101,18 +123,19 @@ export default {
       })
     })
     
-    const currentAddingCheck = ref(null)
-    const newCheck = check => {
-      currentAddingCheck.value = check
-    }
-    const closeNewCheck = () => currentAddingCheck.value = null
+    const {
+      currentAddingCheck,
+      newCheck,
+      saveNewCheck,
+      closeNewCheck
+    } = useCreateCheck(props, context)
     
     const {
       currentAddingBill,
       newBill,
       saveNewBill,
       closeNewBill
-    } = useCreateBill()
+    } = useCreateBill(props, context)
 
     onMounted(() => {
       $store.dispatch('checks/fetch')
@@ -123,6 +146,7 @@ export default {
       newCheck,
       closeNewCheck,
       currentAddingCheck,
+      saveNewCheck,
       newBill,
       closeNewBill,
       currentAddingBill,

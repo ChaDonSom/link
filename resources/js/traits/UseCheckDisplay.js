@@ -20,14 +20,14 @@ export default (check, context) => {
   // Stats
   const percentLeft = computed(() => leftover.value / check.value.amount)
   const percentUsed = computed(() => used.value / check.value.amount)
-  const billsCount = computed(() => check.value.bills.length)
+  const billsCount  = computed(() => check.value.bills.length)
   
   // Consumption Bar
   const consumptionBarStyle = computed(() => {
     let percent = rounded(percentUsed.value)
     return {
       '--percent-used': percent,
-      '--percent-readable': `'${percent * 100}%'`
+      '--percent-readable': `'${rounded(percent * 100, 1)}%'`
     }
   })
   

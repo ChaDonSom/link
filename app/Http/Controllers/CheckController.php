@@ -25,7 +25,12 @@ class CheckController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $check = Check::create([
+            'amount' => $request->amount,
+            'date'   => $request->date,
+        ]);
+        
+        return response($check, 200);
     }
 
     /**
@@ -48,7 +53,12 @@ class CheckController extends Controller
      */
     public function update(Request $request, Check $check)
     {
-        //
+        $check->fill([
+            'amount' => $request->amount,
+            'date'   => $request->date,
+        ])->save();
+        
+        return response($check, 200);
     }
 
     /**
@@ -59,6 +69,8 @@ class CheckController extends Controller
      */
     public function destroy(Check $check)
     {
-        //
+        $check->delete();
+        
+        return response('Check deleted.', 200);
     }
 }

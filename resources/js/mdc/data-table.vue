@@ -52,4 +52,8 @@ export default {
 @import "~sass/variables";
 @import "@material/checkbox/mdc-checkbox"; // Required only for data table with row selection.
 @import "@material/data-table/mdc-data-table";
+
+.mdc-data-table__header-row th {
+  font-weight: 600;
+}
 </style>
