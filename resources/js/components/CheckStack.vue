@@ -23,7 +23,9 @@
             class="material-icons"
             style="height: 100%; width: 100%;"
             @click.stop="newCheck"
-        >add</mdc-button>
+        >
+          <button-icon>add</button-icon>
+        </mdc-button>
       </div>
       <div class="card stack">
         <CheckCard
@@ -41,11 +43,12 @@ import interact from 'interactjs'
 import moment from 'moment'
 import CheckCard from '@comps/CheckCard'
 import MdcButton from '@mdc/button'
+import ButtonIcon from '@mdc/button-icon'
 import { DragInstance } from '@store/modules/drag-events'
 import useCreateNewCheck from '@traits/CreateNewCheck'
 export default {
   name: "CheckStack",
-  components: { CheckCard, MdcButton },
+  components: { CheckCard, MdcButton, ButtonIcon },
   props: {
     value: Array
   },
@@ -294,16 +297,18 @@ export default {
 <style scoped lang="scss">
 @import "~sass/cards";
 .main {
+  --height: 60vh;
+  --gratio: 0.61803398875;
   .inner {
     position: relative;
-    height: 70vh;
-    width: calc((0.61803398875 * 70vh) + 40px);
+    height: calc(var(--height) + 40px);
+    width: calc(calc(var(--gratio) * var(--height)) + 40px);
     margin: auto;
     .card {
       position: absolute;
       overflow: hidden;
-      height: 70vh;
-      width: 0.61803398875 * 70vh;
+      height: var(--height);
+      width: calc(var(--gratio) * var(--height));
       box-shadow: 0 0 0 1.2px $card-outline;
       border: 12px solid #dfdfdf;
       border-radius: $card-border-radius;
