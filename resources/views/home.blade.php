@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="{{ asset('storage/manifest.json') }}">
   <link rel="icon" sizes="192x192" href="{{ asset('storage/images/budget-192.png') }}">
+  <link rel="apple-touch-icon" href="{{ asset('storage/images/budget-192.png') }}">
 
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -17,12 +18,6 @@
 
   <!-- Scripts -->
   <script src="{{ mix('js/app.js') }}" defer></script>
-
-  <!-- Fonts -->
-  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css?family=Raleway:100" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Nunito+Sans" rel="stylesheet" type="text/css">
 
   <!-- Styles -->
   <link href="{{ mix('css/app.css') }}" rel="stylesheet">
