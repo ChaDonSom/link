@@ -1,7 +1,7 @@
 <template>
 <div class="mdc-data-table" ref="main">
   <table class="mdc-data-table__table" aria-label="Dessert calories">
-    <thead>
+    <thead v-if="$slots.header">
       <tr class="mdc-data-table__header-row">
         <slot name="header">
           <table-cell tag="th">Dessert</table-cell>
@@ -11,7 +11,7 @@
         </slot>
       </tr>
     </thead>
-    <tbody class="mdc-data-table__content">
+    <tbody class="mdc-data-table__content" v-if="$slots.body">
       <slot name="body">
         <table-row>
           <table-cell tag="td">Frozen yogurt</table-cell>
@@ -37,7 +37,7 @@ export default {
     const dataTable = ref(null)
     
     onMounted(() => {
-      dataTable.value = new MDCDataTable(main.value);
+      setTimeout(() => dataTable.value = new MDCDataTable(main.value))
     })
     
     return {
@@ -52,4 +52,8 @@ export default {
 @import "~sass/variables";
 @import "@material/checkbox/mdc-checkbox"; // Required only for data table with row selection.
 @import "@material/data-table/mdc-data-table";
+
+.mdc-data-table__header-row th {
+  font-weight: 600;
+}
 </style>

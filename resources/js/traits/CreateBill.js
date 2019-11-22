@@ -1,16 +1,25 @@
 import moment from 'moment'
+import axios from 'axios'
 import { ref } from '@vue/composition-api'
 
-export default () => {
+export default (props, context) => {
+  const $store = context.root.$store
+  
   const currentAddingBill = ref(null)
   const newBill = () => {
     currentAddingBill.value = {
       amount: 0,
-      date: moment().format("MM/DD/YYYY"),
+      date: moment().format("YYYY-MM-DD"),
       label: '',
     }
   }
-  const saveNewBill = () => {}
+  const saveNewBill = async () => {
+    let request = await axios.post('/bills', currentAddingBill.value)
+      .catch(e => console.warn(e))
+    closeNewBill()
+    await $store.dispatch('checks/fetch')
+    context.emit('bill-created')
+  }
   const closeNewBill = () => currentAddingBill.value = null
   
   return {

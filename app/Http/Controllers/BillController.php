@@ -25,7 +25,13 @@ class BillController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $bill = Bill::create([
+            'label'  => $request->label,
+            'amount' => $request->amount,
+            'date'   => $request->date,
+        ]);
+        
+        return response($bill, 200);
     }
 
     /**
@@ -48,7 +54,13 @@ class BillController extends Controller
      */
     public function update(Request $request, Bill $bill)
     {
-        //
+        $bill->fill([
+            'label'  => $request->label,
+            'amount' => $request->amount,
+            'date'   => $request->date,
+        ])->save();
+        
+        return response($bill, 200);
     }
 
     /**
@@ -59,6 +71,8 @@ class BillController extends Controller
      */
     public function destroy(Bill $bill)
     {
-        //
+        $bill->delete();
+        
+        return response('Bill deleted.', 200);
     }
 }

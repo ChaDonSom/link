@@ -1,5 +1,5 @@
 <template>
-  <tr class="mdc-data-table__row">
+  <tr class="mdc-data-table__row" @click="$emit('click', $event)">
     <slot>
       <td class="mdc-data-table__cell">Frozen yogurt</td>
       <td class="mdc-data-table__cell mdc-data-table__cell--numeric">24</td>

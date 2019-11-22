@@ -18,6 +18,10 @@ export default {
       }
       return s.data
     },
+    array: (s, g) => {
+      if (g.includeOld) return Object.keys(g.data).map(k => g.data[k])
+      return Object.keys(s.data).map(k => s.data[k]).filter(bill => !bill.is_legacy)
+    },
   },
   mutations: {
     ...mutations,
@@ -26,17 +30,21 @@ export default {
     ...actions,
     async fetch({ dispatch, getters }, p) {
       let request = await axios.get('/api/bills')
-      if (getters.includeOld) var requestForOld = await axios.get('/api/old/bills')
-      
+
       if (request.status !== 200) return console.error("Request failed: ", request)
-      if (requestForOld && requestForOld.status !== 200) return console.error("Request for legacy failed: ", requestForOld)
-      
+
       dispatch('set', ['', 'data', request.data.reduce((acc, curr) => {
         acc[curr.id] = curr
         return acc
       }, {})])
-      if (getters.includeOld) dispatch('set', ['', 'oldData', requestForOld.data.reduce((acc, curr) => {
-        acc[curr.id + .5] = curr
+    },
+    async page({ dispatch, getters }, p) {
+      let request = await axios.get(`/api/bills?page=${p}`)
+
+      if (request.status !== 200) return console.error("Request failed: ", request)
+
+      dispatch('set', ['', 'data', request.data.reduce((acc, curr) => {
+        acc[curr.id] = curr
         return acc
       }, {})])
     }

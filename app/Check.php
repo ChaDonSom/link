@@ -32,6 +32,7 @@ class Check extends Model
         $maxDate = optional($this->next_check)->date ?? $this->date->clone()->addDays(14);
         return Bill::where('date', '>=', $minDate)
             ->where('date', '<', $maxDate)
+            ->orderBy('date', 'asc')
             ->get();
     }
     

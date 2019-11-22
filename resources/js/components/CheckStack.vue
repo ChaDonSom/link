@@ -22,8 +22,10 @@
             v-if="!top"
             class="material-icons"
             style="height: 100%; width: 100%;"
-            @click.stop="newCheck"
-        >add</mdc-button>
+            @click="newCheck"
+        >
+          <button-icon>add</button-icon>
+        </mdc-button>
       </div>
       <div class="card stack">
         <CheckCard
@@ -41,11 +43,12 @@ import interact from 'interactjs'
 import moment from 'moment'
 import CheckCard from '@comps/CheckCard'
 import MdcButton from '@mdc/button'
+import ButtonIcon from '@mdc/button-icon'
 import { DragInstance } from '@store/modules/drag-events'
 import useCreateNewCheck from '@traits/CreateNewCheck'
 export default {
   name: "CheckStack",
-  components: { CheckCard, MdcButton },
+  components: { CheckCard, MdcButton, ButtonIcon },
   props: {
     value: Array
   },
@@ -128,8 +131,8 @@ export default {
           tossed.r = lastPos.r = pos.r
           value.tossed.value = [ ...value.tossed.value, tossed ]
           lastPos.z = 0
-          this.style.transition = "opacity 0.2s ease-out"
-          lastTopcard.value.style.transition = "opacity 0.2s ease-out"
+          this.style.transition = "opacity 0.2s ease-out, z-index 0s"
+          lastTopcard.value.style.transition = "opacity 0.2s ease-out, z-index 0s"
           pos.x = pos.y = pos.r = 0
           pos.o = 1
         })
@@ -206,7 +209,7 @@ export default {
         _card.off(e)
       } else if (direction && direction.includes('down')) {
         if (!top.value) {
-          if (currentDrag.value.events.length < 7) return
+          if (currentDrag.value.events.length < 7) return console.log("too few drag events")
         }
         _card.on(e)
       }
@@ -273,6 +276,7 @@ export default {
         .on('dragstart', e => handleDragStart(e))
         .on('dragmove',  e => handleDrag(e))
         .on('dragend',   e => handleDragEnd(e))
+        .on('tap',       e => context.root.$router.push(`/check/${top.value.id}`))
     })
     return {
       checks,
@@ -294,16 +298,18 @@ export default {
 <style scoped lang="scss">
 @import "~sass/cards";
 .main {
+  --height: 60vh;
+  --gratio: 0.61803398875;
   .inner {
     position: relative;
-    height: 70vh;
-    width: calc((0.61803398875 * 70vh) + 40px);
+    height: calc(var(--height) + 40px);
+    width: calc(calc(var(--gratio) * var(--height)) + 40px);
     margin: auto;
     .card {
       position: absolute;
       overflow: hidden;
-      height: 70vh;
-      width: 0.61803398875 * 70vh;
+      height: var(--height);
+      width: calc(var(--gratio) * var(--height));
       box-shadow: 0 0 0 1.2px $card-outline;
       border: 12px solid #dfdfdf;
       border-radius: $card-border-radius;

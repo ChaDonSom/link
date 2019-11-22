@@ -1,42 +1,32 @@
 <template>
-  <grid v-cloak v-if="check">
+  <grid v-cloak v-if="tableRows">
     <grid-inner>
       <cell :span="12" class="centerer">
         <mdc-button @click="logout">Log out</mdc-button>
       </cell>
-      <cell :span="12" style="display: flex;">
-        <mdc-icon-button @click="editCheck(check)"
-          style="margin: auto;"
-        >edit
-        </mdc-icon-button>
-      </cell>
-      <cell :span="12" class="centerer"
-          v-if="check"
-      >
-        <h2 style="text-align: center;">{{ monthDay }}</h2>
-        <p style="text-align: center;">{{ year }}</p>
-        <p class="align-money">{{ dollars(check.amount) }}</p>
-        <p class="align-money">Used: {{ dollars(used) }}</p>
-        <p class="align-money">Leftover: {{ leftover }}</p>
-        <div class="consumption-bar" :style="consumptionBarStyle"></div>
-      </cell>
-      <cell :span="12" style="display: flex;">
-        <data-table v-if="check" style="margin: auto;">
+      <cell :span="12" style="display: flex; flex-direction: column;">
+        <data-table v-if="checks" style="margin: auto;">
           <template #header>
             <table-cell tag="th" numeric>Date</table-cell>
             <table-cell tag="th">Label</table-cell>
             <table-cell tag="th" numeric>Amount</table-cell>
           </template>
           <template #body>
-            <table-row v-for="bill of check.bills" :key="`bill_${bill.id}`" @click="editBill(bill)">
-              <table-cell tag="td" numeric>{{ date(bill).format("MM/DD/YY") }}</table-cell>
-              <table-cell tag="td">{{ bill.label }}</table-cell>
-              <table-cell tag="td" numeric>{{ dollars(bill.amount) }}</table-cell>
+            <table-row
+                v-for="row of tableRows"
+                :key="`${row.label}_${row.id}`"
+                @click="editRow(row)"
+                :class="{ 'check-row': row.isCheck }"
+            >
+              <table-cell tag="td" numeric>{{ date(row).format("MM/DD/YY") }}</table-cell>
+              <table-cell tag="td">{{ row.label }}</table-cell>
+              <table-cell tag="td" numeric>{{ dollars(row.amount) }}</table-cell>
             </table-row>
           </template>
         </data-table>
       </cell>
     </grid-inner>
+    <mdc-fab @click="newBill" class="fab">add</mdc-fab>
     <Modal
         v-model="currentEditingBill"
         @close="closeBill"
@@ -70,29 +60,28 @@
       </template>
     </Modal>
     <Modal
-        v-model="currentEditingCheck"
-        @close="closeCheck"
+        v-model="currentAddingBill"
+        @close="closeNewBill"
     >
       <template v-slot="{ value }">
         <grid>
           <grid-inner>
             <cell :span="12">
-              <textfield type="number" v-model.number="value.amount" autofocus>Amount</textfield>
+              <textfield v-model="value.label" autofocus>For</textfield>
+            </cell>
+            <cell :span="12">
+              <textfield type="number" v-model="value.amount" autofocus>Amount</textfield>
             </cell>
             <cell :span="12">
               <textfield type="date" v-model="value.date" autofocus>Date</textfield>
             </cell>
-            <cell :span="12" style="display: flex;">
-              <mdc-button @click="saveCheck"
-                style="margin: 0 auto 0 0;"
+            <cell :span="12">
+              <mdc-button @click="saveNewBill"
+                style="margin: 0 calc(50% - 37px);"
               >
                 <button-label>Save</button-label>
                 <button-icon>save</button-icon>
               </mdc-button>
-              <mdc-icon-button @click="deleteCheck"
-                style="margin: 0 0 0 auto; color: red;"
-              >delete
-              </mdc-icon-button>
             </cell>
           </grid-inner>
         </grid>
@@ -106,14 +95,14 @@ import { logout } from '@helpers/logout'
 import { dollars } from '@helpers/currency'
 import { reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount, computed, ref, watch } from '@vue/composition-api'
 import moment from 'moment'
-import useCheckDisplay from '@traits/UseCheckDisplay'
 import useEditBill from '@traits/EditBill'
-import useEditCheck from '@traits/EditCheck'
+import useCreateBill from '@traits/CreateBill'
 import Grid from '@mdc/grid.vue'
 import GridInner from '@mdc/grid-inner.vue'
 import Cell from '@mdc/cell.vue'
 import MdcIconButton from '@mdc/icon-button'
 import MdcButton from '@mdc/button'
+import MdcFab from '@mdc/fab'
 import ButtonLabel from '@mdc/button-label'
 import ButtonIcon from '@mdc/button-icon'
 import DataTable from '@mdc/data-table'
@@ -124,14 +113,14 @@ import Modal from '@comps/Modal'
 import Textfield from '@mdc/textfield.vue'
 
 export default {
-  name: 'Check',
+  name: 'Bills',
   props: {
-    id: true,
   },
   components: {
     Grid,
     GridInner,
     Cell,
+    MdcFab,
     MdcButton,
     MdcIconButton,
     DataTable,
@@ -150,22 +139,26 @@ export default {
       checks: ChecksModule
     })
     
-    const check = computed({
-      get: () => {
-        let checks = $store.getters['checks/array']
-        return $store.getters['checks/getCheckById'](Number(props.id))
-      },
-      set: v => {}
-    })
-    const recordedCheckVisit = ref(false)
-    watch(() => check.value, () => {
-      if (check.value && check.value.id && !recordedCheckVisit.value) {
-        $store.commit('checks/recordVisit', check.value)
-        recordedCheckVisit.value = true
-      }
-    })
+    const checks = computed(() => $store.getters['checks/array'])
     
     const date = x => moment(x.date)
+    
+    const tableRows = computed(() => {
+      let rows = []
+      for (let check of checks.value) {
+        rows.push({ ...check, label: 'Check', isCheck: true })
+        for (let bill of check.bills) rows.push(bill)
+      }
+      return rows.sort((a, b) => {
+        if (b.date > a.date) return 1
+        if (a.date > b.date) return -1
+        return 0
+      })
+    })
+    const editRow = row => {
+      if (row.label === 'Check') return context.root.$router.push(`/check/${row.id}`)
+      return editBill(row)
+    }
     
     const {
       currentEditingBill,
@@ -176,20 +169,11 @@ export default {
     } = useEditBill(props, context)
     
     const {
-      currentEditingCheck,
-      editCheck,
-      saveCheck,
-      deleteCheck,
-      closeCheck
-    } = useEditCheck(props, context)
-    
-    const {
-      monthDay,
-      year,
-      used,
-      leftover,
-      consumptionBarStyle
-    } = useCheckDisplay(check, context)
+      currentAddingBill,
+      newBill,
+      saveNewBill,
+      closeNewBill
+    } = useCreateBill(props, context)
     
     onMounted(() => {
       let checks = $store.getters['checks/array']
@@ -197,36 +181,39 @@ export default {
     })
     
     return {
-      check,
+      checks,
       date,
       logout,
       dollars,
-      monthDay,
-      year,
-      used,
-      leftover,
-      consumptionBarStyle,
       
+      tableRows,
+      editRow,
+
       currentEditingBill,
       editBill,
       saveBill,
       deleteBill,
       closeBill,
       
-      currentEditingCheck,
-      editCheck,
-      saveCheck,
-      deleteCheck,
-      closeCheck,
+      currentAddingBill,
+      newBill,
+      saveNewBill,
+      closeNewBill,
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import "~sass/consumption-bar";
-.align-money {
-  text-align: right;
-  width: 85%;
+.fab {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
+}
+th {
+  background-color: rgba(0,0,0,0.04);
+}
+.check-row {
+  background-color: rgba(0,0,0,0.1);
 }
 </style>

@@ -8,10 +8,12 @@ import Register from '@pages/Register.vue'
 
 import Home     from '@pages/Home.vue'
 import Check    from '@pages/Check.vue'
+import Bills    from '@pages/Bills.vue'
 
 const routes = [
   { path: '/',          component: Home,     props: true },
   { path: '/check/:id', component: Check,    props: true },
+  { path: '/bills',     component: Bills,    props: true },
   
   { path: '/login',     component: Login,    props: true },
   { path: '/welcome',   component: Welcome,  props: true },
