@@ -13,31 +13,30 @@
 </template>
 
 <script>
+// import interact from 'interactjs'
 import { reactive, ref, onMounted, computed } from '@vue/composition-api'
 import { MDCRipple } from '@material/ripple'
 export default {
-  name: 'mdc-button',
+  name: 'mdc-fab',
   props: {
     tag: String,
     href: String,
     to: String,
-    raised: Boolean,
     color: String,
-    big: Boolean,
   },
   setup(props, context) {
     const main = ref(null)
     const ripple = ref(null)
     const classes = reactive({
-      'mdc-button': true,
-      'mdc-button--raised': props.raised,
-      'big': props.big,
+      'mdc-fab': true,
+      'material-icons': true,
       'secondary': computed(() => props.color === 'secondary'),
     })
     const uid = ref(Math.random() * 10000)
     
     onMounted(() => {
       if (props.tag !== 'router-link') ripple.value = new MDCRipple(main.value)
+      // interact(main.value).on('tap', event => context.emit('click', event))
     })
     return {
       main,
@@ -50,20 +49,15 @@ export default {
 
 <style lang="scss">
 @import '~sass/before-mdc';
-@import '@material/button/mdc-button';
-.mdc-button {
+@import '@material/fab/mdc-fab';
+.mdc-fab {
+  &> span { width: 100%; }
   &:focus, &:active, &:hover {
     outline: none;
     text-decoration: none;
   }
-  @include mdc-button-shape-radius(18px);
-  &.big {
-    padding: 32px;
-    line-height: 0;
-    @include mdc-button-shape-radius(48px);
-  }
   &.secondary {
-    @include mdc-button-filled-accessible($mdc-theme-secondary);
+    @include mdc-fab-accessible($mdc-theme-secondary);
   }
 }
 </style>

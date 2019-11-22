@@ -16,7 +16,9 @@ export default (props, context) => {
   const saveNewBill = async () => {
     let request = await axios.post('/bills', currentAddingBill.value)
       .catch(e => console.warn(e))
-    $store.dispatch('checks/fetch')
+    closeNewBill()
+    await $store.dispatch('checks/fetch')
+    context.emit('bill-created')
   }
   const closeNewBill = () => currentAddingBill.value = null
   

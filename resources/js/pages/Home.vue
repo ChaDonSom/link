@@ -12,10 +12,16 @@
         />
       </cell>
       <cell :span="12" style="display: flex;">
-        <mdc-button @click="newCheck" style="margin: auto;">New check</mdc-button>
+        <mdc-button @click="newCheck" style="margin: 0 auto;">New check</mdc-button>
+        <mdc-button @click="newBill" style="margin: 0 auto;">New bill</mdc-button>
       </cell>
       <cell :span="12" style="display: flex;">
-        <mdc-button @click="newBill" style="margin: auto;">New bill</mdc-button>
+        <mdc-button
+            tag="router-link"
+            to="/bills"
+            style="margin: 0 calc(50% - 64px);"
+            big
+        >All bills</mdc-button>
       </cell>
     </grid-inner>
     <Modal
@@ -140,6 +146,7 @@ export default {
     onMounted(() => {
       $store.dispatch('checks/fetch')
     })
+    
     return {
       ...toRefs(render),
       logout,

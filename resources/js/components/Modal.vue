@@ -5,7 +5,7 @@
         class="scrim"
         @click="closeIfNoCloseButton"
     >
-      <div class="container" @click.stop="() => {}">
+      <div class="container">
         <div class="modal">
           <slot name="close-button"></slot>
           <slot :value="value"></slot>
@@ -27,7 +27,9 @@ export default {
     onMounted(() => {
     })
     
-    const closeIfNoCloseButton = () => {
+    const closeIfNoCloseButton = ev => {
+      if (ev.target.closest('.container')) return
+      
       let closeButton = context.slots.closeButton
       if (!closeButton) context.emit('close')
     }

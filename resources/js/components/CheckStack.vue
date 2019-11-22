@@ -22,7 +22,7 @@
             v-if="!top"
             class="material-icons"
             style="height: 100%; width: 100%;"
-            @click.stop="newCheck"
+            @click="newCheck"
         >
           <button-icon>add</button-icon>
         </mdc-button>
@@ -131,8 +131,8 @@ export default {
           tossed.r = lastPos.r = pos.r
           value.tossed.value = [ ...value.tossed.value, tossed ]
           lastPos.z = 0
-          this.style.transition = "opacity 0.2s ease-out"
-          lastTopcard.value.style.transition = "opacity 0.2s ease-out"
+          this.style.transition = "opacity 0.2s ease-out, z-index 0s"
+          lastTopcard.value.style.transition = "opacity 0.2s ease-out, z-index 0s"
           pos.x = pos.y = pos.r = 0
           pos.o = 1
         })
@@ -209,7 +209,7 @@ export default {
         _card.off(e)
       } else if (direction && direction.includes('down')) {
         if (!top.value) {
-          if (currentDrag.value.events.length < 7) return
+          if (currentDrag.value.events.length < 7) return console.log("too few drag events")
         }
         _card.on(e)
       }
@@ -276,6 +276,7 @@ export default {
         .on('dragstart', e => handleDragStart(e))
         .on('dragmove',  e => handleDrag(e))
         .on('dragend',   e => handleDragEnd(e))
+        .on('tap',       e => context.root.$router.push(`/check/${top.value.id}`))
     })
     return {
       checks,
