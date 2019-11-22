@@ -15,7 +15,9 @@ export default (props, context) => {
   const saveNewCheck = async () => {
     let request = await axios.post('/checks', currentAddingCheck.value)
       .catch(e => console.warn(e))
-    $store.dispatch('checks/fetch')
+    closeNewCheck()
+    await $store.dispatch('checks/fetch')
+    context.emit('check-created')
   }
   const closeNewCheck = () => currentAddingCheck.value = null
   
