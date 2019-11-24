@@ -18,6 +18,12 @@
           <button-label>Somero.dev</button-label>
         </mdc-button>
       </cell>
+      <cell :desktop="6" :tablet="4" :phone="2" class="flex-center">
+        <mdc-button tag="router-link" to="/register">
+          <button-icon>person</button-icon>
+          <button-label>Register</button-label>
+        </mdc-button>
+      </cell>
     </grid-inner>
   </grid>
 </template>

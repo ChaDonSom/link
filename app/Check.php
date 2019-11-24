@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Check extends Model
 {
     protected $fillable = [
-        'date', 'amount', 'is_legacy'
+        'date', 'amount', 'is_legacy', 'owner_ref'
     ];
     protected $casts = [
         'date' => 'date',
@@ -17,6 +17,8 @@ class Check extends Model
         'leftover',
         'end_date',
     ];
+    
+    public function owner() { return $this->belongsTo('App\User', 'owner_ref'); }
     
     public function getLeftoverAttribute() {
         $total = $this->amount;
@@ -30,7 +32,8 @@ class Check extends Model
     public function getBillsAttribute() {
         $minDate = $this->date;
         $maxDate = optional($this->next_check)->date ?? $this->date->clone()->addDays(14);
-        return Bill::where('date', '>=', $minDate)
+        return Bill::where('owner_ref', $this->owner_ref)
+            ->where('date', '>=', $minDate)
             ->where('date', '<', $maxDate)
             ->orderBy('date', 'asc')
             ->get();

@@ -26,9 +26,10 @@ class BillController extends Controller
     public function store(Request $request)
     {
         $bill = Bill::create([
-            'label'  => $request->label,
-            'amount' => $request->amount,
-            'date'   => $request->date,
+            'label'     => $request->label,
+            'amount'    => $request->amount,
+            'date'      => $request->date,
+            'owner_ref' => $request->user()->id,
         ]);
         
         return response($bill, 200);

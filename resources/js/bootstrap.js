@@ -4,10 +4,13 @@ window.axios = require('axios')
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 
-let token = document.head.querySelector('meta[name="csrf-token"]')
-
-if (token) window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content
-else console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token')
+window.axios.get('/refresh_token')
+  .then(response => {
+    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = response.data.token
+  })
+  .catch(error => {
+    // axios.get('/logout')
+  })
 
 window.user = document.head.querySelector('meta[name="user"]');
 if (window.user && window.user.content) window.user = JSON.parse(window.user.content)

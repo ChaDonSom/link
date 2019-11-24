@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Check;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CheckController extends Controller
 {
@@ -14,7 +15,7 @@ class CheckController extends Controller
      */
     public function index()
     {
-        return response(Check::all(), 200);
+        return response(Auth::user()->checks, 200);
     }
 
     /**
@@ -26,8 +27,9 @@ class CheckController extends Controller
     public function store(Request $request)
     {
         $check = Check::create([
-            'amount' => $request->amount,
-            'date'   => $request->date,
+            'amount'    => $request->amount,
+            'date'      => $request->date,
+            'owner_ref' => $request->user()->id,
         ]);
         
         return response($check, 200);
