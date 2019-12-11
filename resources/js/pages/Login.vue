@@ -52,6 +52,7 @@ export default {
         get() { return $store.getters['login/password'] },
         set(v) { return $store.dispatch('login/set', ['state', 'password', v]) }
       }),
+      remember: true
     })
     const login = async () => {
       let post = await axios.post('/login', creds, { headers: {

@@ -60,6 +60,11 @@ export default {
     width: fit-content;
     height: fit-content;
     overflow-y: auto;
+    @media screen and (max-width: 479px) {
+      top: unset;
+      bottom: 0;
+      transform: translateX(-50%);
+    }
     .modal {
       display: block;
       background-color: #efefef;
@@ -81,6 +86,9 @@ export default {
 .fade-zoom-leave-to {
   opacity: 0;
   transform: scale(0.95) translateY(10px);
+  @media screen and (max-width: 479px) {
+    transform: scale(0.95) translateY(100vw);
+  }
   & .modal {
     box-shadow: none;
   }

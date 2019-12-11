@@ -18,6 +18,10 @@ class ImportOldBudgetData extends Migration
      */
     public function up()
     {
+        $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
+        $db = DB::select($query, ['legacy']);
+        if (empty($db)) return print("\nNo legacy datbase.\n\n");
+
         Schema::table('checks', function (Blueprint $table) {
             $table->boolean('is_legacy')->default(false);
         });
@@ -60,6 +64,10 @@ class ImportOldBudgetData extends Migration
      */
     public function down()
     {
+        $query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME =  ?";
+        $db = DB::select($query, ['legacy']);
+        if (empty($db)) return print("\nNo legacy datbase.\n\n");
+        
         $countChecks = Check::where('is_legacy', true)->count();
         $countBills  = Bill::where('is_legacy', true) ->count();
         Check::where('is_legacy', true)->each(function ($check) { $check->forceDelete(); });
