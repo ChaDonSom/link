@@ -25,8 +25,9 @@ export default (check, context) => {
   // Consumption Bar
   const consumptionBarStyle = computed(() => {
     let percent = rounded(percentUsed.value)
+    let maxxed  = percent > 1 ? 1 : percent
     return {
-      '--percent-used': percent,
+      '--percent-used': maxxed,
       '--percent-readable': `'${rounded(percent * 100, 1)}%'`
     }
   })
