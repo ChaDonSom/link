@@ -24,6 +24,8 @@ class AddOwnersToChecks extends Migration
         });
         
         $user = User::first();
+	if (!$user) return print("\nNo user, skipping owner assumption of checks/bills...\n");
+
         Check::all()->each(function ($check) use ($user) {
             $check->fill([ 'owner_ref' => $user->id ])->save();
         });
