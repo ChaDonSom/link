@@ -4,9 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Node;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class NodeController extends Controller
 {
+
+	public $validationRules = [
+		'title'    => 'string|required|max:1000',
+		'content'  => 'string',
+		'lefts'    => 'nullable|array',
+		'rights'   => 'nullable|array',
+		'lefts.*'  => 'numeric|exists:nodes,id',
+		'rights.*' => 'numeric|exists:nodes,id',
+	];
+
+
     /**
      * Display a listing of the resource.
      *
@@ -14,17 +26,7 @@ class NodeController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+	    return response(Node::all(), 200);
     }
 
     /**
@@ -35,7 +37,19 @@ class NodeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+	    $request->validate($this->validationRules);
+
+	    $slug = Str::slug($request->title);
+	    $existing = Node::where('slug', $slug)->get()->count();
+	    if ($existing) $slug.= '-' . ($existing + 1);
+
+	    $node = Node::create([
+	    	'title'   => $request->title,
+		'content' => $request->content ?? '',
+		'slug'    => $slug,
+	    ]);
+
+	    return response($node, 200);
     }
 
     /**
@@ -46,20 +60,22 @@ class NodeController extends Controller
      */
     public function show(Node $node)
     {
-        //
-    }
+        return response($node, 200);
+    } 
 
     /**
-     * Show the form for editing the specified resource.
+     * Display the specified resource by its slug.
      *
-     * @param  \App\Node  $node
+     * @param  string  $slug
      * @return \Illuminate\Http\Response
      */
-    public function edit(Node $node)
+    public function showBySlug($slug)
     {
-        //
-    }
+	$node = Node::where('slug', $slug)->first();
 
+	if ($node) return response($node, 200);
+	else return abort(404);
+    }
     /**
      * Update the specified resource in storage.
      *
@@ -69,7 +85,22 @@ class NodeController extends Controller
      */
     public function update(Request $request, Node $node)
     {
-        //
+	    $request->validate($this->validationRules);
+
+	    $slug = Str::slug($request->title);
+	    $existing = Node::where('slug', $slug)->get()->count();
+	    if ($existing) $slug.= '-' . ($existing + 1);
+
+	    $node->fill([
+	    	'title'   => $request->title,
+		'content' => $request->content ?? '',
+		'slug'    => $slug,
+	    ])->save();
+
+	    if ($request->lefts)  $node->lefts() ->sync($request->lefts);
+	    if ($request->rights) $node->rights()->sync($request->rights);
+
+	    return response($node, 200);
     }
 
     /**
@@ -80,6 +111,8 @@ class NodeController extends Controller
      */
     public function destroy(Node $node)
     {
-        //
+	    $node->delete();
+
+	    return response($node, 200);
     }
 }

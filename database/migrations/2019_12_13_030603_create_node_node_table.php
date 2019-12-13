@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNodesTable extends Migration
+class CreateNodeNodeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateNodesTable extends Migration
      */
     public function up()
     {
-        Schema::create('nodes', function (Blueprint $table) {
+        Schema::create('node_node', function (Blueprint $table) {
             $table->bigIncrements('id');
 	    $table->timestamps();
-	    $table->string('title');
-	    $table->string('slug');
-	    $table->text('content');
+	    $table->bigInteger('left_ref');
+	    $table->bigInteger('right_ref');
         });
     }
 
@@ -29,6 +28,6 @@ class CreateNodesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nodes');
+        Schema::dropIfExists('node_node');
     }
 }
