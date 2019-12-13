@@ -5,7 +5,7 @@
           :desktop="4"
            :tablet="2"
             :phone="2" >
-        You must be signed in to use the Budget app. <br>
+        You must be signed in to use the Links app. <br>
         <a href="/login">Log in</a>
       </cell>
       <cell v-else class="add-check-row"
