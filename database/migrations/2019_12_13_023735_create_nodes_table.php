@@ -15,10 +15,11 @@ class CreateNodesTable extends Migration
     {
         Schema::create('nodes', function (Blueprint $table) {
             $table->bigIncrements('id');
-	    $table->timestamps();
-	    $table->string('title');
-	    $table->string('slug');
-	    $table->text('content');
+            $table->timestamps();
+            $table->bigInteger('created_by');
+            $table->string('title');
+            $table->string('slug');
+            $table->text('content');
         });
     }
 

@@ -15,7 +15,9 @@ class NodeController extends Controller
 		'lefts'    => 'nullable|array',
 		'rights'   => 'nullable|array',
 		'lefts.*'  => 'numeric|exists:nodes,id',
-		'rights.*' => 'numeric|exists:nodes,id',
+        'rights.*' => 'numeric|exists:nodes,id',
+        'users'    => 'nullable|array',
+        'users.*'  => 'numeric|exists:users,id',
 	];
 
 
@@ -44,10 +46,16 @@ class NodeController extends Controller
 	    if ($existing) $slug.= '-' . ($existing + 1);
 
 	    $node = Node::create([
-	    	'title'   => $request->title,
-		'content' => $request->content ?? '',
-		'slug'    => $slug,
-	    ]);
+	    	'title'      => $request->title,
+            'content'    => $request->content ?? '',
+            'slug'       => $slug,
+            'created_by' => $request->user()->id,
+        ]);
+        
+	    if ($request->lefts)  $node->lefts() ->sync($request->lefts);
+        if ($request->rights) $node->rights()->sync($request->rights);
+        
+        if ($request->users)  $node->users() ->sync($request->users);
 
 	    return response($node, 200);
     }
@@ -93,12 +101,14 @@ class NodeController extends Controller
 
 	    $node->fill([
 	    	'title'   => $request->title,
-		'content' => $request->content ?? '',
-		'slug'    => $slug,
+            'content' => $request->content ?? '',
+            'slug'    => $slug,
 	    ])->save();
 
 	    if ($request->lefts)  $node->lefts() ->sync($request->lefts);
-	    if ($request->rights) $node->rights()->sync($request->rights);
+        if ($request->rights) $node->rights()->sync($request->rights);
+        
+        if ($request->users)  $node->users() ->sync($request->users);
 
 	    return response($node, 200);
     }
