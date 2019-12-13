@@ -3,9 +3,9 @@
     <grid-inner>
       <cell :span="12" class="flex-center"><h2>Welcome!</h2></cell>
       <cell :span="12" class="flex-center">
-        <img src="/storage/images/budget-192.png" />
+        <img src="/storage/images/link-192.png" />
       </cell>
-      <cell :span="12" class="flex-center">To use Somero Budget, you must log in.</cell>
+      <cell :span="12" class="flex-center">To use Links, you must log in.</cell>
       <cell :desktop="6" :tablet="4" :phone="2" class="flex-center">
         <mdc-button tag="router-link" to="/login">
           <button-icon>send</button-icon>
