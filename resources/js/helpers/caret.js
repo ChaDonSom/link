@@ -48,9 +48,9 @@ export const getCursorXY = (input, selectionPoint) => {
   const { offsetLeft: spanX, offsetTop: spanY } = span
   // lastly, remove that dummy element
   // NOTE:: can comment this out for debugging purposes if you want to see where that span is rendered
-  // document.body.removeChild(div)
+  document.body.removeChild(div)
   // return an object with the x and y of the caret. account for input positioning so that you don't need to wrap the input
-  console.log(inputX, spanX)
+  // console.log(inputX, spanX)
   return {
     x: inputX + spanX,
     y: inputY + spanY,
