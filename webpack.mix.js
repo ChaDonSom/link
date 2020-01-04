@@ -1,6 +1,9 @@
 const mix = require('laravel-mix');
 
 var webpackConfig = {
+  // devServer: {
+  //   host: 'localhost',
+  // },
   resolve: {
     alias: {
       '@js': path.resolve(__dirname, 'resources/js'),
@@ -45,5 +48,5 @@ mix
   
   .webpackConfig(webpackConfig)
   .scssForVue()
-  .browserSync({ proxy: 'localhost:8000' })
+  .browserSync({ proxy: 'http://localhost:8000', open: 'external' })
 

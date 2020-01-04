@@ -1,0 +1,16 @@
+.flex-container {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  .flex-row {
+    display: inline-flex;
+    min-width: 240px;
+    &:first-of-type { margin-right: auto; }
+    &:last-of-type  { margin-left:  auto; }
+  }
+  .top-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}

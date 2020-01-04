@@ -8,12 +8,13 @@
       :class="classes"
       id="uid"
   >
+    <div class="mdc-button__ripple"></div>
     <slot></slot>
   </component>
 </template>
 
 <script>
-import { reactive, ref, onMounted, computed } from '@vue/composition-api'
+import { reactive, ref, onMounted, computed, watch } from '@js/vue-setup'
 import { MDCRipple } from '@material/ripple'
 export default {
   name: 'mdc-button',
@@ -26,7 +27,6 @@ export default {
     big: Boolean,
   },
   setup(props, context) {
-    const main = ref(null)
     const ripple = ref(null)
     const classes = reactive({
       'mdc-button': true,
@@ -36,9 +36,11 @@ export default {
     })
     const uid = ref(Math.random() * 10000)
     
-    onMounted(() => {
-      if (props.tag !== 'router-link') ripple.value = new MDCRipple(main.value)
+    const main = ref(null)
+    watch(main, () => {
+      if (props.tag !== 'router-link' && main.value) ripple.value = new MDCRipple(main.value)
     })
+      
     return {
       main,
       classes,

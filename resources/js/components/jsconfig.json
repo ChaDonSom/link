@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@blocks/*": [
+        "resources/js/components/blocks/*"
+      ],
+      "@comps/*": [
+        "resources/js/components/*"
+      ],
+      "@traits/*": [
+        "resources/js/traits/*"
+      ],
+      "@pages/*": [
+        "resources/js/pages/*"
+      ],
+      "@mdc/*": [
+        "resources/js/mdc/*"
+      ],
+      "@store/*": [
+        "resources/js/store/*"
+      ],
+      "@route/*": [
+        "resources/js/route/*"
+      ],
+      "@helpers/*": [
+        "resources/js/helpers/*"
+      ],
+      "@js/*": [
+        "resources/js/*"
+      ],
+      "sass/*": [
+        "resources/sass/*"
+      ],
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "public"
+  ]
+}
