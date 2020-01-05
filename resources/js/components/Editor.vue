@@ -6,8 +6,7 @@
         contenteditable="true"
         id="editable"
         @input="input"
-        @click="input"
-        @keypress="input"
+        @click="click"
     ></div>
     <div class="caret" :style="caretStyle"></div>
   </div>
@@ -32,8 +31,13 @@ export default {
     })
     
     const input = event => {
-      if (!(['input', 'click'].includes(event.type))) return
-      
+      locateCaret(event)
+      value.value = event.target.innerHTML
+    }
+    const click = event => {
+      locateCaret(event)
+    }
+    function locateCaret(event) {
       let div = event.target
       
       let textElement = getSelection().getRangeAt(0).endContainer.parentElement
@@ -45,12 +49,6 @@ export default {
       let pos = getCursorXY(textElement, selection)
       caret.x = pos.x
       caret.y = pos.y
-
-      value.value = div.innerHTML
-    }
-    const click = event => {
-      let pos = getSelection()
-      console.log(pos)
     }
     
     const command = payload => {
