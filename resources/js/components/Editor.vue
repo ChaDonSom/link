@@ -36,7 +36,7 @@ export default {
       
       let div = event.target
       
-      let textElement = getSelection().getRangeAt(0).commonAncestorContainer.parentElement
+      let textElement = getSelection().getRangeAt(0).endContainer.parentElement
       
       if (textElement.tagName !== 'DIV') textElement = textElement.closest('div')
       
