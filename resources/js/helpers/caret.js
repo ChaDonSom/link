@@ -6,13 +6,14 @@ export const getCursorXY = (input, selectionPoint) => {
     offsetLeft: inputX,
     offsetTop: inputY,
   } = input
+  
   // create a dummy element that will be a clone of our input
   const div = document.createElement(input.tagName)
+  
   // get the computed style of the input and clone it onto the dummy element
   const copyStyle = getComputedStyle(input)
-  for (const prop of copyStyle) {
-    div.style[prop] = copyStyle[prop]
-  }
+  for (const prop of copyStyle) div.style[prop] = copyStyle[prop]
+  
   div.style.position = 'relative'
   /*if (['TEXTAREA', 'DIV'].includes(input.tagName))*/ div.style.height = 'auto'
   // if a single line input then the div needs to be single line and not break out like a text area
@@ -27,7 +28,6 @@ export const getCursorXY = (input, selectionPoint) => {
   )
   // set the div content to that of the textarea up until selection
   const content = inputValue.substr(0, selectionPoint)
-  // console.log(content)
   // set the text content of the dummy element div
   div.innerHTML = content
   // create a marker element to obtain caret position
@@ -40,94 +40,27 @@ export const getCursorXY = (input, selectionPoint) => {
   // } else {
   //   span.textContent = inputValue.substr(selectionPoint)
   // }
+  
   // append the span marker to the div
-  div.appendChild(span)
+  if (Array.from(input.childNodes).some(child => child.nodeType === child.TEXT_NODE)) {
+    div.insertBefore(span, div.childNodes[1])
+  } else {
+    div.appendChild(span)
+  }
+    
   // append the dummy element to the body
   document.body.appendChild(div)
   // get the marker position, this is the caret position top and left relative to the input
   const { offsetLeft: spanX, offsetTop: spanY } = span
+
   // lastly, remove that dummy element
   // NOTE:: can comment this out for debugging purposes if you want to see where that span is rendered
   document.body.removeChild(div)
   // return an object with the x and y of the caret. account for input positioning so that you don't need to wrap the input
-  // console.log(inputX, spanX)
+
   return {
     x: inputX + spanX,
     y: inputY + spanY,
-  }
-}
-
-export function getCaretCharacterOffsetWithin(element) {
-    var caretOffset = 0;
-    var doc = element.ownerDocument || element.document;
-    var win = doc.defaultView || doc.parentWindow;
-    var sel;
-    if (typeof win.getSelection != "undefined") {
-        sel = win.getSelection();
-        if (sel.rangeCount > 0) {
-            var range = sel.getRangeAt(0);
-            var preCaretRange = range.cloneRange();
-            preCaretRange.selectNodeContents(element);
-            preCaretRange.setEnd(range.endContainer, range.endOffset);
-            sel.removeAllRanges()
-            sel.addRange(preCaretRange)
-            console.log(sel.toString())
-            caretOffset = preCaretRange.toString().length;
-        }
-    } else if ( (sel = doc.selection) && sel.type != "Control") {
-        var textRange = sel.createRange();
-        var preCaretTextRange = doc.body.createTextRange();
-        preCaretTextRange.moveToElementText(element);
-        preCaretTextRange.setEndPoint("EndToEnd", textRange);
-        caretOffset = preCaretTextRange.text.length;
-    }
-    return caretOffset;
-}
-
-export function createRange(node, chars, range) {
-    if (!range) {
-        range = document.createRange()
-        range.selectNode(node);
-        range.setStart(node, 0);
-    }
-
-    if (chars.count === 0) {
-        range.setEnd(node, chars.count);
-    } else if (node && chars.count >0) {
-        if (node.nodeType === Node.TEXT_NODE) {
-            if (node.textContent.length < chars.count) {
-                chars.count -= node.textContent.length;
-            } else {
-                range.setEnd(node, chars.count);
-                chars.count = 0;
-            }
-        } else {
-           for (var lp = 0; lp < node.childNodes.length; lp++) {
-                range = createRange(node.childNodes[lp], chars, range);
-
-                if (chars.count === 0) {
-                    break;
-                }
-            }
-        }
-    }
-    return range;
-};
-
-export function setCurrentCursorPosition(el, chars) {
-  if (chars >= 0) {
-    var selection = window.getSelection()
-
-    let range = createRange(el, { count: chars })
-
-    if (range) {
-      // console.log(range)
-      range.collapse()
-      // console.log('endContainer:', range.endContainer, 'endOffset:', range.endOffset)
-      selection.removeAllRanges()
-      selection.addRange(range)
-      selection.collapseToEnd()
-    }
   }
 }
 

@@ -6,7 +6,8 @@
         contenteditable="true"
         id="editable"
         @input="input"
-        @click="click"
+        @click="input"
+        @keypress="input"
     ></div>
     <div class="caret" :style="caretStyle"></div>
   </div>
@@ -14,12 +15,7 @@
 
 <script>
 import { ref, reactive, computed, onMounted } from '@js/vue-setup'
-import {
-  getCursorXY,
-  getHTMLCaretPosition,
-  setCurrentCursorPosition,
-  getLineHeight
-} from '@helpers/caret'
+import { getCursorXY, getHTMLCaretPosition } from '@helpers/caret'
 import _ from 'lodash'
 export default {
   setup(props, context) {
@@ -34,27 +30,23 @@ export default {
       top:  computed(() => caret.y + 'px'),
       left: computed(() => caret.x + 'px')
     })
+    
     const input = event => {
+      if (!(['input', 'click'].includes(event.type))) return
+      
       let div = event.target
       
-      let textElement  = getSelection().getRangeAt(0).commonAncestorContainer.parentElement
-      let top          = textElement.getBoundingClientRect().top
-      let lineHeight   = getLineHeight(textElement)
-      let bottomOfLine = top + lineHeight
-      // console.log(bottomOfLine)
+      let textElement = getSelection().getRangeAt(0).commonAncestorContainer.parentElement
       
       if (textElement.tagName !== 'DIV') textElement = textElement.closest('div')
       
       let selection = getHTMLCaretPosition(textElement)
-      // console.log(selection)
 
       let pos = getCursorXY(textElement, selection)
       caret.x = pos.x
       caret.y = pos.y
-      // console.log(pos)
-      
+
       value.value = div.innerHTML
-      // setCurrentCursorPosition(div, selection)
     }
     const click = event => {
       let pos = getSelection()
