@@ -11,14 +11,17 @@
     <div class="caret" :style="caretStyle"></div>
     <TypingModal
         :position="caretAsTopAndLeft"
-        v-model="modalValue"
-    >Test</TypingModal>
+        v-show="activelySuggesting"
+    >
+      <h3>{{ phrase.value }}</h3>
+    </TypingModal>
   </div>
 </template>
 
 <script>
 import { ref, reactive, computed, onMounted } from '@js/vue-setup'
 import { getCursorXY, getHTMLCaretPosition } from '@helpers/caret'
+import { cleanHTML } from '@helpers/string'
 import _ from 'lodash'
 import TypingModal from '@comps/TypingModal'
 export default {
@@ -27,6 +30,32 @@ export default {
     const main = ref(null)
     
     const value = ref('')
+    const triggerCharacters = reactive({
+      direct: '@',
+      named: '#'
+    })
+    const phrase = computed(() => {
+      let val = value.value
+      let checkFor = triggerCharacters
+      
+      let mostRecentType
+      let highestIndex = 0
+      for (let key in checkFor) {
+        let lastIndex = val.lastIndexOf(checkFor[key])
+        if (lastIndex >= highestIndex) {
+          highestIndex = lastIndex
+          mostRecentType = key
+        }
+      }
+      
+      context.root.$emit('phrase-calculated')
+      return {
+        value: mostRecentType ? cleanHTML(val.slice(highestIndex + 1)) : '',
+        trigger: checkFor[mostRecentType],
+        type: mostRecentType,
+        active: Boolean(mostRecentType)
+      }
+    })
     const caret = reactive({
       x: 0,
       y: 0,
@@ -39,10 +68,12 @@ export default {
       top: computed(() => caret.y),
       left: computed(() => caret.x)
     })
+    const activelySuggesting = computed(() => phrase.value.active)
     
     const input = event => {
-      locateCaret(event)
+      // locateCaret(event)
       value.value = event.target.innerHTML
+      context.root.$once('phrase-calculated', locateCaret.bind(null, event))
     }
     const click = event => {
       locateCaret(event)
@@ -57,8 +88,11 @@ export default {
       let selection = getHTMLCaretPosition(textElement)
 
       let pos = getCursorXY(textElement, selection)
-      caret.x = pos.x
-      caret.y = pos.y
+      
+      if (phrase.value.active) {
+        caret.x = pos.x
+        caret.y = pos.y
+      }
     }
     
     const command = payload => {
@@ -74,12 +108,15 @@ export default {
     return {
       main,
       value,
+      phrase,
+      
       input,
       click,
+      
       caret,
       caretStyle,
       caretAsTopAndLeft,
-      modalValue: 'test'
+      activelySuggesting
     }
   }
 }

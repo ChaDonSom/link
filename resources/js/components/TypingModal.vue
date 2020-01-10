@@ -1,7 +1,6 @@
 <template>
   <transition name="fade-zoom">
     <div
-        v-if="value"
         class="scrim"
         :style="cssPositionVars"
     >
