@@ -2,10 +2,11 @@
   <transition name="fade-zoom">
     <div
         class="scrim"
+        ref="scrim"
         :style="cssPositionVars"
     >
-      <div class="container">
-        <div class="modal">
+      <div class="container" ref="container">
+        <div class="modal" ref="modal">
           <slot name="close-button"></slot>
           <slot :value="value"></slot>
         </div>
@@ -15,7 +16,7 @@
 </template>
 
 <script>
-import { reactive, onMounted, computed } from '@vue/composition-api'
+import { reactive, onMounted, computed, ref } from '@vue/composition-api'
 
 export default {
   props: {
@@ -33,12 +34,32 @@ export default {
     }
   },
   setup(props, context) {
+    const container = ref(null)
+    const modal     = ref(null)
+    const scrim     = ref(null)
     
+    const calculatedPosition = computed(() => {
+      let top  = props.position.top
+      let left = props.position.left
+      
+      if (scrim.value) {
+        let container = scrim.value.querySelector('.container')
+        let rect = container.getBoundingClientRect()
+        let style = getComputedStyle(container)
+        let padding = Number(style.padding.split('px')[0])
+        var maxX = window.innerWidth - (rect.width + padding)
+      } else {
+        var maxX = 1000
+      }
+      
+      return {
+        top,
+        left: left > maxX ? maxX : left
+      }
+    })
     const cssPositionVars = reactive({
-      '--top':   computed(() => props.position.top  + 'px'),
-      '--left':  computed(() => props.position.left + 'px'),
-      '--topN':  computed(() => (props.position.top * -1) + 'px'),
-      '--leftN': computed(() => (props.position.left * -1) + 'px'),
+      '--top':   computed(() => calculatedPosition.value.top  + 'px'),
+      '--left':  computed(() => calculatedPosition.value.left + 'px')
     })
     
     onMounted(() => {
@@ -46,6 +67,10 @@ export default {
     
     
     return {
+      container,
+      modal,
+      
+      relevantPositioningInfo,
       cssPositionVars
     }
   }
@@ -66,8 +91,6 @@ export default {
     position: absolute;
     left: var(--left);
     top: var(--top);
-    /*transform: translate(var(--leftN), var(--topN));*/
-    width: fit-content;
     height: fit-content;
     overflow-y: auto;
     padding: 12px;

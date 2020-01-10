@@ -8,7 +8,6 @@
         @input="input"
         @click="click"
     ></div>
-    <div class="caret" :style="caretStyle"></div>
     <TypingModal
         :position="caretAsTopAndLeft"
         v-show="activelySuggesting"
@@ -20,7 +19,7 @@
 
 <script>
 import { ref, reactive, computed, onMounted } from '@js/vue-setup'
-import { getCursorXY, getHTMLCaretPosition } from '@helpers/caret'
+import { getCursorXY, getHTMLCaretPosition, getLineHeight } from '@helpers/caret'
 import { cleanHTML } from '@helpers/string'
 import _ from 'lodash'
 import TypingModal from '@comps/TypingModal'
@@ -56,6 +55,7 @@ export default {
         active: Boolean(mostRecentType)
       }
     })
+    const activelySuggesting = computed(() => phrase.value.active)
     const caret = reactive({
       x: 0,
       y: 0,
@@ -65,10 +65,9 @@ export default {
       left: computed(() => caret.x + 'px')
     })
     const caretAsTopAndLeft = reactive({
-      top: computed(() => caret.y),
+      top: computed(() => caret.y + (main.value ? getLineHeight(main.value) : 0)),
       left: computed(() => caret.x)
     })
-    const activelySuggesting = computed(() => phrase.value.active)
     
     const input = event => {
       // locateCaret(event)
@@ -109,14 +108,14 @@ export default {
       main,
       value,
       phrase,
+      activelySuggesting,
       
       input,
       click,
       
       caret,
       caretStyle,
-      caretAsTopAndLeft,
-      activelySuggesting
+      caretAsTopAndLeft
     }
   }
 }
