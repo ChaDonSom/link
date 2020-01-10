@@ -9,6 +9,10 @@
         @click="click"
     ></div>
     <div class="caret" :style="caretStyle"></div>
+    <TypingModal
+        :position="caretAsTopAndLeft"
+        v-model="modalValue"
+    >Test</TypingModal>
   </div>
 </template>
 
@@ -16,7 +20,9 @@
 import { ref, reactive, computed, onMounted } from '@js/vue-setup'
 import { getCursorXY, getHTMLCaretPosition } from '@helpers/caret'
 import _ from 'lodash'
+import TypingModal from '@comps/TypingModal'
 export default {
+  components: { TypingModal },
   setup(props, context) {
     const main = ref(null)
     
@@ -28,6 +34,10 @@ export default {
     const caretStyle = reactive({
       top:  computed(() => caret.y + 'px'),
       left: computed(() => caret.x + 'px')
+    })
+    const caretAsTopAndLeft = reactive({
+      top: computed(() => caret.y),
+      left: computed(() => caret.x)
     })
     
     const input = event => {
@@ -67,7 +77,9 @@ export default {
       input,
       click,
       caret,
-      caretStyle
+      caretStyle,
+      caretAsTopAndLeft,
+      modalValue: 'test'
     }
   }
 }

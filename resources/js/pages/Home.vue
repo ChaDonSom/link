@@ -11,10 +11,10 @@
       >
         <grid-inner style="min-height: calc(var(--min-height) - var(--padding);">
           <cell :span="12">
-            <editor class="editor" />
             <!-- input box / content display/edit -->
               <!-- input / editable itself -->
-              <!-- typing options dropdown -->
+            <editor class="editor" />
+            <!-- typing options dropdown -->
                 <!-- quick mention -->
                 <!-- custom-named mention -->
           </cell>
@@ -44,7 +44,7 @@ import FlatPickr from 'flatpickr'
 import { appUrl, user, session } from '@traits/AccessesHeadMeta'
 import moment from 'moment'
 import axios from 'axios'
-import Modal from '@comps/Modal'
+import TypingModal from '@comps/TypingModal'
 import PageTopBar from '@comps/PageTopBar'
 import PageEditBar from '@comps/PageEditBar'
 import Layout from '@js/layout/Editor'
@@ -67,7 +67,7 @@ export default {
     Cell,
     MdcButton,
     IconButton,
-    Modal,
+    TypingModal,
     Textfield,
     ButtonLabel,
     ButtonIcon,
@@ -104,7 +104,8 @@ export default {
     
     return {
       grid,
-      gridStyle
+      gridStyle,
+      modalValue: 'test'
     }
   },
 }
