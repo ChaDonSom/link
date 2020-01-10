@@ -70,7 +70,6 @@ export default {
       container,
       modal,
       
-      relevantPositioningInfo,
       cssPositionVars
     }
   }
